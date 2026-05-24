@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Add Font Awesome 6 and custom layouts to header / footer -->
+    <template id="easya_layout_inherit" inherit_id="website.layout" name="Easy A Layout Customization">
+        <!-- Inject Font Awesome or additional meta if necessary -->
+        <xpath expr="//head" position="inside">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+        </xpath>
+
+        <!-- Inject Floating Action Buttons for quick student support right at the end of body -->
+        <xpath expr="//div[@id='wrapwrap']" position="inside">
+            <div class="easya-floating-ctas d-print-none">
+                <!-- Zalo Floating Button -->
+                <a href="https://zalo.me/0767816876" target="_blank" class="floating-btn zalo-btn" title="Tư vấn nhanh qua Zalo">
+                    <i class="fa-solid fa-comments"></i>
+                    <span class="tooltip-text">Chat Zalo 24/7</span>
+                </a>
+                
+                <!-- Direct Phone Button -->
+                <a href="tel:0767816876" class="floating-btn phone-btn" title="Gọi Hotline hỗ trợ">
+                    <i class="fa-solid fa-phone-volume"></i>
+                    <span class="tooltip-text">Call 076.781.6876</span>
+                </a>
+            </div>
+        </xpath>
+    </template>
+</odoo>

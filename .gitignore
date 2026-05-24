@@ -1,0 +1,23 @@
+# Credentials & Secrets
+secure_credentials.json
+secrets.json
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# IDEs & System files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Python virtual environment & Cache
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# Odoo Core (Excluded to keep repository light, prevent slow push and Vercel build failure)
+odoo/

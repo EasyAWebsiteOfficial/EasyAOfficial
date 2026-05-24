@@ -1,0 +1,371 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Replace the default Odoo homepage with our premium custom-designed landing page -->
+    <template id="easya_homepage_custom" inherit_id="website.homepage" active="True" customize_show="True" name="Easy A Custom Homepage">
+        <xpath expr="//div[@id='wrap']" position="replace">
+            <div id="wrap" class="oe_structure oe_empty">
+                
+                <!-- SECTION 1: HERO BANNER -->
+                <section class="easya-hero-section">
+                    <div class="container">
+                        <div class="row align-items-center">
+                            <div class="col-lg-6 mb-5 mb-lg-0">
+                                <span class="badge-slogan text-uppercase">
+                                    <i class="fa-solid fa-star me-2"></i>Uy tín - Kịp thời - Chất lượng
+                                </span>
+                                <h1 class="hero-title">Đồng Hành Học Tập Đạt Điểm A Dễ Dàng</h1>
+                                <p class="hero-subtitle">
+                                    Easy A cung cấp trọn gói giải pháp học tập toàn diện cho sinh viên các trường Đại học tại Việt Nam. Từ thu thập số liệu, xử lý thống kê đến viết tiểu luận, báo cáo thực tập và hỗ trợ nghiên cứu khoa học chuyên sâu.
+                                </p>
+                                <div class="d-flex flex-wrap gap-3">
+                                    <a href="#calculator" class="btn btn-warning btn-lg px-4 py-3 fw-bold rounded-pill text-white shadow-sm transition-all">
+                                        <i class="fa-solid fa-calculator me-2"></i>Tính Phí Ước Tính
+                                    </a>
+                                    <a href="#services" class="btn btn-outline-primary btn-lg px-4 py-3 fw-bold rounded-pill transition-all">
+                                        <i class="fa-solid fa-list-check me-2"></i>Xem Dịch Vụ
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-6 text-center position-relative">
+                                <!-- Elegant isometric floating visual design instead of simple image -->
+                                <div class="p-4 bg-white rounded-24 border border-1 border-light shadow-lg">
+                                    <div class="row g-3">
+                                        <div class="col-6">
+                                            <div class="p-3 bg-primary-light rounded-16 border border-primary border-opacity-10 text-center py-4">
+                                                <i class="fa-solid fa-graduation-cap text-primary mb-2" style="font-size: 2.25rem;"></i>
+                                                <h3 class="fw-bold mb-1">50+</h3>
+                                                <p class="text-muted small mb-0">Ngành Học</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-3 bg-warning-light rounded-16 border border-warning border-opacity-10 text-center py-4">
+                                                <i class="fa-solid fa-circle-check text-warning mb-2" style="font-size: 2.25rem;"></i>
+                                                <h3 class="fw-bold mb-1">100%</h3>
+                                                <p class="text-muted small mb-0">Hài Lòng</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-3 bg-info-light rounded-16 border border-info border-opacity-10 text-center py-4">
+                                                <i class="fa-solid fa-bolt text-info mb-2" style="font-size: 2.25rem;"></i>
+                                                <h3 class="fw-bold mb-1">24/7</h3>
+                                                <p class="text-muted small mb-0">Kịp Thời</p>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="p-3 bg-success-light rounded-16 border border-success border-opacity-10 text-center py-4">
+                                                <i class="fa-solid fa-award text-success mb-2" style="font-size: 2.25rem;"></i>
+                                                <h3 class="fw-bold mb-1">9.5+</h3>
+                                                <p class="text-muted small mb-0">Điểm GPA Tb</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 2: CORE SERVICES GRID -->
+                <section id="services" class="easya-services-section">
+                    <div class="container">
+                        <div class="section-title-wrap">
+                            <span class="text-primary fw-bold text-uppercase tracking-wider">Hỗ Trợ Học Tập Trọn Gói</span>
+                            <h2 class="mt-2 fw-extrabold text-3xl">Dịch Vụ Nổi Bật Tại Easy A</h2>
+                            <p class="text-muted max-w-2xl mx-auto mt-2">Đội ngũ chuyên gia từ Easy A sẵn sàng đồng hành cùng sinh viên giải quyết mọi khó khăn học tập.</p>
+                        </div>
+                        <div class="row g-4">
+                            <!-- Card 1: Data Collection -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-database"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Thu Thập Dữ Liệu</h3>
+                                    <p class="service-card-text">
+                                        Hỗ trợ thiết kế & phân phối Google Form. Thu thập dữ liệu tài chính từ sàn chứng khoán, dữ liệu phi tài chính và dữ liệu sơ cấp/thứ cấp đa dạng phục vụ nghiên cứu khoa học.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 2: Plagiarism Check -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-file-shield"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Kiểm Tra Đạo Văn</h3>
+                                    <p class="service-card-text">
+                                        Hỗ trợ quét đạo văn bằng hệ thống tiêu chuẩn quốc tế như **Turnitin** và các phần mềm chuyên biệt tương thích chính xác với quy chế của từng trường Đại học.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 3: AI Detection -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-robot"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Quét Đạo Văn AI</h3>
+                                    <p class="service-card-text">
+                                        Sử dụng công nghệ AI tiên tiến để quét, rà soát và phát hiện tỷ lệ các nội dung được khởi tạo bằng trí tuệ nhân tạo (ChatGPT, Claude...) trước khi nộp bài.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 4: Paraphrasing & AI Reduction -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-pen-nib"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Hạ Đạo Văn & Hạ Tỷ Lệ AI</h3>
+                                    <p class="service-card-text">
+                                        Biên tập, viết lại (paraphrase) thủ công chuyên nghiệp giúp tối ưu câu chữ, cam kết hạ thấp tỷ lệ đạo văn và tỷ lệ AI đạt chuẩn quy định của giảng viên.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 5: Statistics & Analysis -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-chart-line"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Xử Lý Số Liệu & Thống Kê</h3>
+                                    <p class="service-card-text">
+                                        Phân tích chuyên sâu và chạy số liệu định lượng chuẩn xác bằng các công cụ hàng đầu: **SPSS**, **Stata**, **SmartPLS**, **Amos**, phiên giải kết quả chi tiết.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 6: Research Package -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-book-open"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Nghiên Cứu Khoa Học</h3>
+                                    <p class="service-card-text">
+                                        Gói hỗ trợ làm bài nghiên cứu khoa học chuyên sâu, định hình ý tưởng, lập đề cương chi tiết và hoàn thiện nội dung cho hơn 50+ ngành học toàn quốc.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 7: Theses & Internship Reports -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-file-invoice"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Báo Cáo & Khóa Luận</h3>
+                                    <p class="service-card-text">
+                                        Hỗ trợ trọn gói khóa luận tốt nghiệp, chuyên đề tốt nghiệp, báo cáo thực tập, viết nhật ký thực tập cam kết bảo mật thông tin và bám sát yêu cầu.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 8: Essays & Coursework -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-scroll"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Tiểu Luận Học Phần</h3>
+                                    <p class="service-card-text">
+                                        Nhận viết bài tiểu luận chất lượng cao ở tất cả các môn chuyên ngành và môn đại cương (Mác-Lênin, Tư tưởng Hồ Chí Minh, Pháp luật đại cương...).
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Card 9: Slides & Tech Sketches -->
+                            <div class="col-md-6 col-lg-4">
+                                <div class="service-card">
+                                    <div class="service-icon-box">
+                                        <i class="fa-solid fa-palette"></i>
+                                    </div>
+                                    <h3 class="service-card-title">Hỗ Trợ Giải Bài Tập & Thiết Kế</h3>
+                                    <p class="service-card-text">
+                                        Giải bài tập chuyên ngành, thiết kế Slide báo cáo thuyết trình chuyên nghiệp (Canva, PowerPoint), vẽ phác thảo kỹ thuật/mỹ thuật theo yêu cầu riêng.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 3: MAJORS PORTAL (70+ MAJORS CATEGORIZED) -->
+                <section class="easya-majors-section">
+                    <div class="container">
+                        <div class="section-title-wrap">
+                            <span class="text-primary fw-bold text-uppercase tracking-wider">Hỗ Trợ Toàn Diện</span>
+                            <h2 class="mt-2 fw-extrabold text-3xl">Danh Mục Các Khối Ngành Hỗ Trợ</h2>
+                            <p class="text-muted max-w-2xl mx-auto mt-2">Easy A có mạng lưới cộng tác viên rộng lớn hỗ trợ sinh viên tại hơn 70+ chuyên ngành học khác nhau.</p>
+                        </div>
+
+                        <!-- Tab Selection Menu -->
+                        <div class="d-flex justify-content-center">
+                            <ul class="nav nav-pills" id="majorsTab" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="business-tab" data-bs-toggle="tab" data-bs-target="#business" type="button" role="tab" aria-controls="business" aria-selected="true">
+                                        <i class="fa-solid fa-briefcase me-2"></i>Kinh Doanh &amp; Quản Lý
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="tech-tab" data-bs-toggle="tab" data-bs-target="#tech" type="button" role="tab" aria-controls="tech" aria-selected="false">
+                                        <i class="fa-solid fa-laptop-code me-2"></i>CNTT &amp; Kỹ Thuật
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="health-tab" data-bs-toggle="tab" data-bs-target="#health" type="button" role="tab" aria-controls="health" aria-selected="false">
+                                        <i class="fa-solid fa-heart-pulse me-2"></i>Y Tế &amp; Sức Khỏe
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="humanities-tab" data-bs-toggle="tab" data-bs-target="#humanities" type="button" role="tab" aria-controls="humanities" aria-selected="false">
+                                        <i class="fa-solid fa-language me-2"></i>Nhân Văn &amp; Xã Hội
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <!-- Tab Contents -->
+                        <div class="tab-content mt-4" id="majorsTabContent">
+                            <!-- Block A: Business -->
+                            <div class="tab-pane fade show active" id="business" role="tabpanel" aria-labelledby="business-tab">
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Quản trị kinh doanh</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Marketing</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kinh doanh quốc tế</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Tài chính – Ngân hàng</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kế toán</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kiểm toán</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Logistics &amp; Chuỗi cung ứng</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Thương mại điện tử</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Quản trị nhân lực</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Bất động sản</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kinh tế học</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kinh tế quốc tế</div></div>
+                                </div>
+                            </div>
+
+                            <!-- Block B: Tech & Engineering -->
+                            <div class="tab-pane fade" id="tech" role="tabpanel" aria-labelledby="tech-tab">
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Công nghệ thông tin</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Khoa học máy tính</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kỹ thuật phần mềm</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Trí tuệ nhân tạo (AI)</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Thiết kế vi mạch bán dẫn</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Khoa học dữ liệu</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kỹ thuật điều khiển &amp; TĐH</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Điện tử – Viễn thông</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Công nghệ kỹ thuật ô tô</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kỹ thuật cơ điện tử</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kiến trúc &amp; Xây dựng</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Công nghệ thực phẩm</div></div>
+                                </div>
+                            </div>
+
+                            <!-- Block C: Health & Medical -->
+                            <div class="tab-pane fade" id="health" role="tabpanel" aria-labelledby="health-tab">
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Y đa khoa (Bác sĩ)</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Răng – Hàm – Mặt</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Dược học</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Điều dưỡng</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Y học cổ truyền</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kỹ thuật xét nghiệm y học</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Kỹ thuật phục hồi chức năng</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Y tế công cộng</div></div>
+                                </div>
+                            </div>
+
+                            <!-- Block D: Humanities, Social & Others -->
+                            <div class="tab-pane fade" id="humanities" role="tabpanel" aria-labelledby="humanities-tab">
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Ngôn ngữ Anh / Hàn / Nhật</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Tâm lý học hành vi</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Truyền thông đa phương tiện</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Quan hệ công chúng (PR)</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Luật kinh tế / Luật học</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Quan hệ quốc tế</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Quản trị du lịch &amp; lữ hành</div></div>
+                                    <div class="col-sm-6 col-md-4 col-lg-3"><div class="major-item-tag">Sư phạm Tiểu học / Mầm non</div></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION 4: INTERACTIVE PRICING CALCULATOR -->
+                <div id="calculator">
+                    <t t-call="easya_website.calculator_layout_template"/>
+                </div>
+
+                <!-- SECTION 5: STUDENT TESTIMONIALS CAROUSEL -->
+                <section class="easya-testimonials-section">
+                    <div class="container">
+                        <div class="section-title-wrap">
+                            <span class="text-primary fw-bold text-uppercase tracking-wider">Cảm Nhận Từ Học Viên</span>
+                            <h2 class="mt-2 fw-extrabold text-3xl">Sinh Viên Nói Gì Về Easy A?</h2>
+                        </div>
+                        <div class="row g-4">
+                            <div class="col-md-4">
+                                <div class="feedback-card">
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <p class="feedback-content">
+                                        "Mình làm đề tài nghiên cứu khoa học chuyên ngành tài chính nhưng kẹt phần chạy số liệu Stata. Nhờ Easy A thu thập số liệu và hướng dẫn chạy kiểm định, mình đã được 9.5 bảo vệ thành công!"
+                                    </p>
+                                    <div class="user-info">
+                                        <div class="avatar-placeholder">MT</div>
+                                        <div class="user-details">
+                                            <h5>Minh Thư</h5>
+                                            <p>Sinh viên Kinh tế Quốc dân (NEU)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feedback-card">
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <p class="feedback-content">
+                                        "Bài khóa luận của mình quét Turnitin ra tới 32% đạo văn. May có dịch vụ hạ đạo văn và giảm AI của Easy A, bài nộp cuối cùng chỉ còn 8%, giảng viên khen biên tập câu chữ rất mượt."
+                                    </p>
+                                    <div class="user-info">
+                                        <div class="avatar-placeholder">DK</div>
+                                        <div class="user-details">
+                                            <h5>Duy Khánh</h5>
+                                            <p>Sinh viên Bách Khoa (HUST)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="feedback-card">
+                                    <div class="stars">
+                                        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+                                    </div>
+                                    <p class="feedback-content">
+                                        "Dịch vụ cực kỳ uy tín và kịp thời! Mình cần làm Slide báo cáo Canva gấp trong đêm để sáng mai thuyết trình. Đội ngũ Easy A hoàn thành đúng giờ và slide thiết kế siêu bắt mắt!"
+                                    </p>
+                                    <div class="user-info">
+                                        <div class="avatar-placeholder">LA</div>
+                                        <div class="user-details">
+                                            <h5>Lan Anh</h5>
+                                            <p>Sinh viên Ngoại Thương (FTU)</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </xpath>
+    </template>
+</odoo>

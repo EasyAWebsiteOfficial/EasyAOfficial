@@ -1,0 +1,19 @@
+// -*- coding: utf-8 -*-
+// Brand color definitions for Easy A
+$o-we-color-primary: #0a365e !default;    // Xanh dương đậm - Uy tín & Tin cậy
+$o-we-color-secondary: #1a4da3 !default;  // Xanh nước biển - Hiện đại & Tri thức
+$o-we-color-warning: #ffc331 !default;    // Vàng ánh sao - Sự tỏa sáng & Điểm A
+$o-we-color-info: #4aa9d7 !default;       // Xanh dương sáng - Trẻ trung & Năng động
+$o-we-color-light: #f8fafc !default;
+$o-we-color-dark: #0f172a !default;
+
+// Bootstrap standard color overrides for website frontend
+$primary: #0a365e;
+$secondary: #1a4da3;
+$warning: #ffc331;
+$info: #4aa9d7;
+$body-bg: #fefeff;
+$text-muted: #64748b;
+
+// Custom fonts import config (will be linked in layout too)
+$font-family-sans-serif: 'Outfit', 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;

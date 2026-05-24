@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="calculator_layout_template" name="Easy A Calculator Form Template">
+        <section class="easya-calculator-section">
+            <div class="container">
+                <div class="section-title-wrap">
+                    <span class="text-primary fw-bold text-uppercase tracking-wider">Ước Tính Phí Nhanh</span>
+                    <h2 class="calc-title mt-2 fw-extrabold">Công Cụ Tính Chi Phí Hỗ Trợ Học Tập</h2>
+                    <p class="text-muted max-w-2xl mx-auto mt-2">Dễ dàng lựa chọn dịch vụ phù hợp để ước lượng khoảng giá dự kiến. Cam kết giá cả hợp lý, đi đôi với chất lượng điểm A.</p>
+                </div>
+                
+                <div class="row align-items-stretch">
+                    <!-- Calculator Inputs Form -->
+                    <div class="col-lg-7 mb-4 mb-lg-0">
+                        <div class="calculator-wrapper h-100">
+                            <form id="easya-academic-calc-form" class="row g-3">
+                                <!-- Service Select -->
+                                <div class="col-md-6">
+                                    <label for="calc-service" class="form-group-label">Dịch Vụ Cần Hỗ Trợ</label>
+                                    <select class="form-select" id="calc-service" required="1">
+                                        <option value="data" data-price="200000" data-unit="Mẫu">Thu Thập Dữ Liệu</option>
+                                        <option value="plagiarism" data-price="50000" data-unit="Bài">Kiểm Tra Đạo Văn (Turnitin)</option>
+                                        <option value="ai_check" data-price="70000" data-unit="Bài">Quét Đạo Văn AI (AI Scan)</option>
+                                        <option value="paraphrase" data-price="120000" data-unit="Trang">Hạ Đạo Văn &amp; Hạ Tỷ Lệ AI</option>
+                                        <option value="spss" data-price="1500000" data-unit="Gói">Xử Lý Số Liệu (SPSS/Stata/SmartPLS)</option>
+                                        <option value="research" data-price="4000000" data-unit="Đề tài">Nghiên Cứu Khoa Học Trọn Gói</option>
+                                        <option value="thesis" data-price="3000000" data-unit="Đề tài">Viết Khóa Luận / Báo Cáo Thực Tập</option>
+                                        <option value="essay" data-price="350000" data-unit="Trang">Viết Tiểu Luận Học Phần</option>
+                                        <option value="slides" data-price="250000" data-unit="Bài">Giải Bài Tập &amp; Thiết Kế Slide</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Academic Level Select -->
+                                <div class="col-md-6">
+                                    <label for="calc-level" class="form-group-label">Cấp Độ Học Tập</label>
+                                    <select class="form-select" id="calc-level" required="1">
+                                        <option value="uni" data-multiplier="1.0">Hệ Đại Học (Bình thường)</option>
+                                        <option value="postgrad" data-multiplier="1.3">Hệ Cao Học / Thạc Sĩ</option>
+                                    </select>
+                                </div>
+                                
+                                <!-- Quantity Input -->
+                                <div class="col-md-6">
+                                    <label for="calc-qty" class="form-group-label">Khối Lượng (<span id="calc-qty-unit">Mẫu</span>)</label>
+                                    <input type="number" class="form-control" id="calc-qty" value="1" min="1" required="1"/>
+                                </div>
+                                
+                                <!-- Deadline Select -->
+                                <div class="col-md-6">
+                                    <label for="calc-deadline" class="form-group-label">Thời Hạn Hoàn Thành</label>
+                                    <select class="form-select" id="calc-deadline" required="1">
+                                        <option value="normal" data-multiplier="1.0">Thường (Trên 7 ngày)</option>
+                                        <option value="fast" data-multiplier="1.2">Nhanh (3 đến 7 ngày)</option>
+                                        <option value="urgent" data-multiplier="1.5">Hỏa Tốc (Dưới 3 ngày)</option>
+                                    </select>
+                                </div>
+                                
+                                <hr class="my-4 border-light-dark" style="border-top: 1px dashed rgba(10,54,94,0.15);"/>
+                                
+                                <h5 class="fw-bold text-primary mb-2"><i class="fa-solid fa-user-edit me-2"></i>Thông Tin Liên Hệ Tư Vấn</h5>
+                                
+                                <!-- Contact Name -->
+                                <div class="col-md-6">
+                                    <label for="contact-name" class="form-group-label">Họ &amp; Tên Của Bạn</label>
+                                    <input type="text" class="form-control" id="contact-name" placeholder="Ví dụ: Nguyễn Văn A" required="1"/>
+                                </div>
+                                
+                                <!-- Contact Phone/Zalo -->
+                                <div class="col-md-6">
+                                    <label for="contact-phone" class="form-group-label">Số Điện Thoại / Zalo</label>
+                                    <input type="tel" class="form-control" id="contact-phone" placeholder="Ví dụ: 0987654321" required="1"/>
+                                </div>
+
+                                <!-- Contact University -->
+                                <div class="col-12">
+                                    <label for="contact-uni" class="form-group-label">Trường Đại Học Đang Theo Học</label>
+                                    <input type="text" class="form-control" id="contact-uni" placeholder="Ví dụ: Đại học Ngoại Thương (FTU)" required="1"/>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    
+                    <!-- Pricing Card Output -->
+                    <div class="col-lg-5">
+                        <div class="price-display-box text-center">
+                            <span class="price-label">Giá Ước Tính Dự Kiến</span>
+                            <div class="price-value" id="calc-result-price">200.000đ</div>
+                            <p class="price-note mb-4">
+                                Đây là mức giá tối thiểu ước tính cho gói dịch vụ của bạn. Chi phí thực tế có thể thay đổi tùy theo yêu cầu cụ thể của giảng viên hoặc tài liệu mẫu đi kèm.
+                            </p>
+                            <button type="button" id="easya-calc-submit-btn" class="btn btn-warning btn-lg w-100 py-3 rounded-pill fw-bold text-white shadow transition-all">
+                                <i class="fa-solid fa-paper-plane me-2"></i>Đăng Ký Tư Vấn Chi Tiết
+                            </button>
+                            <div id="calc-submit-msg" class="mt-3 text-center fw-bold small d-none"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </template>
+</odoo>

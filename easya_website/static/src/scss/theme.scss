@@ -1,0 +1,464 @@
+// -*- coding: utf-8 -*-
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+// Global styles & Brand typography
+body {
+    font-family: 'Inter', sans-serif;
+    color: #1e293b;
+    background-color: #fefeff;
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    color: #0a365e;
+}
+
+// Custom Glassmorphism Header
+header.o_affix_header {
+    background: rgba(254, 254, 254, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border-bottom: 1px solid rgba(10, 54, 94, 0.08) !important;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03) !important;
+    transition: all 0.3s ease;
+
+    .navbar-brand {
+        img {
+            max-height: 48px !important;
+            transition: transform 0.3s ease;
+            &:hover {
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    .nav-link {
+        font-weight: 600;
+        color: #1e293b !important;
+        font-size: 0.95rem;
+        transition: color 0.25s ease;
+
+        &:hover, &.active {
+            color: #0a365e !important;
+            background: linear-gradient(120deg, rgba(10, 54, 94, 0.05), rgba(74, 169, 215, 0.08));
+            border-radius: 6px;
+        }
+    }
+}
+
+// Hero Section styling
+.easya-hero-section {
+    position: relative;
+    padding: 140px 0 100px 0;
+    background: radial-gradient(circle at 10% 20%, rgba(26, 77, 163, 0.05) 0%, rgba(74, 169, 215, 0.02) 90%);
+    overflow: hidden;
+
+    &::after {
+        content: '';
+        position: absolute;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(74, 169, 215, 0.15) 0%, rgba(254, 254, 254, 0) 70%);
+        top: -50px;
+        right: -50px;
+        z-index: 1;
+    }
+
+    .hero-title {
+        font-size: 3.25rem;
+        line-height: 1.2;
+        background: linear-gradient(135deg, #0a365e 0%, #1a4da3 50%, #4aa9d7 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 1.5rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.15rem;
+        color: #475569;
+        line-height: 1.6;
+        margin-bottom: 2.5rem;
+    }
+
+    .badge-slogan {
+        display: inline-block;
+        background: rgba(255, 195, 49, 0.15);
+        color: #b45309;
+        font-weight: 700;
+        font-size: 0.85rem;
+        letter-spacing: 1px;
+        padding: 6px 16px;
+        border-radius: 50px;
+        border: 1px solid rgba(255, 195, 49, 0.3);
+        margin-bottom: 1rem;
+    }
+}
+
+// Service Cards Grid with micro-animations
+.easya-services-section {
+    padding: 80px 0;
+    background-color: #fefeff;
+
+    .section-title-wrap {
+        margin-bottom: 50px;
+        text-align: center;
+    }
+
+    .service-card {
+        background: #ffffff;
+        border: 1px solid rgba(10, 54, 94, 0.06);
+        border-radius: 16px;
+        padding: 30px 24px;
+        height: 100%;
+        box-shadow: 0 4px 20px rgba(10, 54, 94, 0.02);
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        position: relative;
+        overflow: hidden;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(to bottom, #0a365e, #4aa9d7);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-icon-box {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(10, 54, 94, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: #0a365e;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .service-card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+            transition: color 0.3s ease;
+        }
+
+        .service-card-text {
+            font-size: 0.92rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        &:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(10, 54, 94, 0.08);
+            border-color: rgba(74, 169, 215, 0.15);
+
+            &::before {
+                opacity: 1;
+            }
+
+            .service-icon-box {
+                background: #0a365e;
+                color: #ffc331;
+                transform: rotate(5deg) scale(1.05);
+            }
+
+            .service-card-title {
+                color: #1a4da3;
+            }
+        }
+    }
+}
+
+// Major Categories section (70+ majors accordion/grid)
+.easya-majors-section {
+    padding: 80px 0;
+    background: linear-gradient(to bottom, #f8fafc, #ffffff);
+
+    .nav-pills {
+        gap: 10px;
+        margin-bottom: 40px;
+        justify-content: center;
+
+        .nav-link {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+            font-size: 0.92rem;
+            color: #475569;
+            background: #ffffff;
+            border: 1px solid rgba(10, 54, 94, 0.08);
+            border-radius: 30px;
+            padding: 10px 20px;
+            transition: all 0.3s ease;
+
+            &.active, &:hover {
+                color: #ffffff !important;
+                background: #0a365e !important;
+                border-color: #0a365e;
+                box-shadow: 0 4px 12px rgba(10, 54, 94, 0.15);
+            }
+        }
+    }
+
+    .major-item-tag {
+        background: #ffffff;
+        border: 1px solid rgba(10, 54, 94, 0.05);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 12px;
+        font-size: 0.9rem;
+        font-weight: 500;
+        color: #334155;
+        display: flex;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.01);
+        transition: all 0.25s ease;
+
+        &::before {
+            content: '✓';
+            color: #ffc331;
+            font-weight: 700;
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        &:hover {
+            border-color: #4aa9d7;
+            background: rgba(74, 169, 215, 0.04);
+            transform: translateX(4px);
+            color: #0a365e;
+        }
+    }
+}
+
+// Pricing Calculator Section (Glassmorphism card)
+.easya-calculator-section {
+    padding: 85px 0;
+    background: radial-gradient(ellipse at bottom, rgba(26, 77, 163, 0.05) 0%, rgba(254, 254, 254, 0) 80%);
+
+    .calculator-wrapper {
+        background: rgba(255, 255, 255, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border: 1px solid rgba(10, 54, 94, 0.1);
+        border-radius: 24px;
+        padding: 40px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.04);
+    }
+
+    .calc-title {
+        font-size: 1.85rem;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .form-group-label {
+        font-weight: 600;
+        color: #334155;
+        margin-bottom: 8px;
+        font-size: 0.92rem;
+    }
+
+    .form-select, .form-control {
+        border-radius: 10px;
+        border: 1px solid rgba(10, 54, 94, 0.15);
+        padding: 12px;
+        font-size: 0.95rem;
+        color: #1e293b;
+        background-color: #ffffff;
+        transition: all 0.2s ease;
+
+        &:focus {
+            border-color: #4aa9d7;
+            box-shadow: 0 0 0 3px rgba(74, 169, 215, 0.15);
+        }
+    }
+
+    .price-display-box {
+        background: linear-gradient(135deg, #0a365e 0%, #1a4da3 100%);
+        border-radius: 18px;
+        padding: 30px;
+        color: #ffffff;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0 10px 25px rgba(10, 54, 94, 0.2);
+
+        .price-label {
+            font-size: 0.9rem;
+            color: rgba(254, 254, 254, 0.85);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 10px;
+        }
+
+        .price-value {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.75rem;
+            font-weight: 800;
+            color: #ffc331;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .price-note {
+            font-size: 0.8rem;
+            color: rgba(254, 254, 254, 0.7);
+            text-align: center;
+        }
+    }
+}
+
+// Testimonials Styles
+.easya-testimonials-section {
+    padding: 80px 0;
+    background-color: #ffffff;
+
+    .feedback-card {
+        border: 1px solid rgba(10, 54, 94, 0.05);
+        border-radius: 16px;
+        padding: 30px;
+        background: #ffffff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+        transition: all 0.3s ease;
+
+        .stars {
+            color: #ffc331;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+        }
+
+        .feedback-content {
+            font-style: italic;
+            color: #475569;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+
+            .avatar-placeholder {
+                width: 45px;
+                height: 45px;
+                background-color: #e2e8f0;
+                color: #0a365e;
+                font-weight: 700;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 1rem;
+            }
+
+            .user-details {
+                h5 {
+                    font-size: 0.95rem;
+                    margin-bottom: 2px;
+                    color: #0a365e;
+                }
+                p {
+                    font-size: 0.8rem;
+                    color: #64748b;
+                    margin-bottom: 0;
+                }
+            }
+        }
+
+        &:hover {
+            box-shadow: 0 10px 25px rgba(10, 54, 94, 0.04);
+            border-color: rgba(74, 169, 215, 0.1);
+        }
+    }
+}
+
+// Floating quick consultation widget (Zalo / Hotline)
+.easya-floating-ctas {
+    position: fixed;
+    right: 25px;
+    bottom: 30px;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .floating-btn {
+        width: 54px;
+        height: 54px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        color: #ffffff;
+        text-decoration: none;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        position: relative;
+
+        i {
+            font-size: 24px;
+        }
+
+        &.zalo-btn {
+            background-color: #0068ff;
+            border: 2px solid #ffffff;
+        }
+
+        &.phone-btn {
+            background-color: #10b981;
+            border: 2px solid #ffffff;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            width: 140px;
+            background-color: #0a365e;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 6px;
+            position: absolute;
+            z-index: 1;
+            right: 125%;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            opacity: 0;
+            transition: opacity 0.3s;
+
+            &::after {
+                content: "";
+                position: absolute;
+                top: 50%;
+                left: 100%;
+                margin-top: -5px;
+                border-width: 5px;
+                border-style: solid;
+                border-color: transparent transparent transparent #0a365e;
+            }
+        }
+
+        &:hover {
+            transform: scale(1.1) rotate(5deg);
+            .tooltip-text {
+                visibility: visible;
+                opacity: 1;
+            }
+        }
+    }
+}

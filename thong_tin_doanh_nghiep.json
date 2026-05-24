@@ -1,0 +1,222 @@
+{
+  "business": {
+    "name": "Easy A",
+    "slogan": "UY TÍN - KỊP THỜI - CHẤT LƯỢNG",
+    "field": "Cung cấp trọn gói các dịch vụ học tập cho các bạn sinh viên tại tất cả các trường đại học tại Việt Nam",
+    "mission": "Đồng hành và hỗ trợ sinh viên tối ưu hóa quá trình học tập, nghiên cứu và hoàn thành các chương trình đào tạo đại học một cách hiệu quả và chất lượng nhất.",
+    "brand_identity": {
+      "aesthetic_style": "Thoải mái, tin cậy, tươi tắn, trẻ trung, hiện đại",
+      "colors": {
+        "primary_dark_blue": "#0a365e",
+        "secondary_yellow": "#ffc331",
+        "medium_blue": "#1a4da3",
+        "white_background": "#fefeff",
+        "light_blue": "#4aa9d7"
+      },
+      "logos": {
+        "icon": "assets/logo_icon.png",
+        "full": "assets/logo_full.png"
+      }
+    },
+    "contacts": {
+      "hotline": "0767816876",
+      "zalo": "0767816876",
+      "facebook": "https://www.facebook.com/profile.php?id=61585289253587",
+      "tiktok": "https://www.tiktok.com/@easya_?_r=1&_t=ZS-96d2852HGeV"
+    }
+  },
+  "services": [
+    {
+      "id": "data_collection",
+      "name": "Dịch vụ thu thập data",
+      "details": "Gồm 3 loại data là data google form, data tài chính (Data từ các sàn chứng khoán có thể thu thấp được & một số data của doanh nghiệp), data phi tài chính, data thứ cấp và data sơ cấp."
+    },
+    {
+      "id": "plagiarism_check",
+      "name": "Kiểm tra đạo văn",
+      "details": "Bằng các ứng dụng check đạo văn phù hợp và tùy biến cho từng trường đại học, như Turnitin..."
+    },
+    {
+      "id": "ai_detection",
+      "name": "Check và kiểm tra đạo AI",
+      "details": "Quét và phát hiện các nội dung được tạo bởi trí tuệ nhân tạo (AI)."
+    },
+    {
+      "id": "plagiarism_ai_reduction",
+      "name": "Hạ đạo văn và hạ AI",
+      "details": "Dịch vụ hạ tỷ lệ đạo văn và tỷ lệ AI tùy theo nhu cầu và quy chuẩn của từng trường."
+    },
+    {
+      "id": "data_analysis",
+      "name": "Chạy số liệu định lượng",
+      "details": "Xử lý số liệu chuyên dụng thông qua các phần mềm SPSS, Stata, SmartPLS, Amos."
+    },
+    {
+      "id": "scientific_research",
+      "name": "Nghiên cứu khoa học chuyên sâu",
+      "details": "Các gói dịch vụ hỗ trợ nghiên cứu khoa học chuyên sâu cho hơn 50+ ngành học trên cả nước."
+    },
+    {
+      "id": "thesis_and_internship",
+      "name": "Viết khóa luận, chuyên đề & báo cáo thực tập",
+      "details": "Hỗ trợ viết khóa luận tốt nghiệp, chuyên đề tốt nghiệp, báo cáo thực tập, nhật ký thực tập..."
+    },
+    {
+      "id": "essays",
+      "name": "Viết tiểu luận",
+      "details": "Dịch vụ viết tiểu luận cho tất cả các ngành học thuộc tất cả các trường đại học trên cả nước."
+    },
+    {
+      "id": "homework_support",
+      "name": "Giải bài tập & Hỗ trợ thiết kế",
+      "details": "Giải bài tập hộ, thiết kế slide thuyết trình chuyên nghiệp trên Canva, Powerpoint, vẽ sketch kỹ thuật/mỹ thuật..."
+    }
+  ],
+  "academic_sectors": [
+    {
+      "group": "A",
+      "name": "Kinh doanh & Quản lý",
+      "statistics": "nhóm #1 — ~146k SV",
+      "majors": [
+        "Quản trị kinh doanh",
+        "Marketing",
+        "Kinh doanh quốc tế",
+        "Tài chính – Ngân hàng",
+        "Kế toán",
+        "Kiểm toán",
+        "Logistics & Quản lý chuỗi cung ứng",
+        "Thương mại điện tử",
+        "Quản trị nhân lực",
+        "Bất động sản",
+        "Kinh tế",
+        "Kinh tế quốc tế"
+      ]
+    },
+    {
+      "group": "B",
+      "name": "Máy tính & Công nghệ thông tin",
+      "statistics": "~63k SV",
+      "majors": [
+        "Công nghệ thông tin",
+        "Khoa học máy tính",
+        "Kỹ thuật phần mềm",
+        "Trí tuệ nhân tạo (AI)",
+        "Khoa học dữ liệu",
+        "An toàn thông tin / An ninh mạng",
+        "Hệ thống thông tin (quản lý)",
+        "Mạng máy tính & truyền thông dữ liệu"
+      ]
+    },
+    {
+      "group": "C",
+      "name": "Công nghệ kỹ thuật & Kỹ thuật",
+      "statistics": "~72k + ~40k SV",
+      "note": "Khối nhiều ngành hot như Trí tuệ nhân tạo, Chip bán dẫn và công nghệ đóng gói, Thiết kế vi mạch bán dẫn",
+      "majors": [
+        "Thiết kế vi mạch bán dẫn",
+        "Kỹ thuật điều khiển & Tự động hóa",
+        "Kỹ thuật điện tử – Viễn thông",
+        "Công nghệ kỹ thuật ô tô",
+        "Công nghệ kỹ thuật điện – điện tử",
+        "Công nghệ kỹ thuật cơ khí",
+        "Kỹ thuật cơ điện tử",
+        "Kỹ thuật điện",
+        "Công nghệ kỹ thuật xây dựng",
+        "Kỹ thuật xây dựng",
+        "Kiến trúc",
+        "Công nghệ thực phẩm",
+        "Công nghệ sinh học",
+        "Kỹ thuật hóa học",
+        "Kỹ thuật môi trường",
+        "Năng lượng tái tạo / Kỹ thuật năng lượng"
+      ]
+    },
+    {
+      "group": "D",
+      "name": "Sức khỏe",
+      "statistics": "~53k SV",
+      "majors": [
+        "Y khoa (Bác sĩ đa khoa)",
+        "Răng – Hàm – Mặt",
+        "Dược học",
+        "Điều dưỡng",
+        "Y học cổ truyền",
+        "Kỹ thuật xét nghiệm y học",
+        "Kỹ thuật phục hồi chức năng",
+        "Y tế công cộng"
+      ]
+    },
+    {
+      "group": "E",
+      "name": "Nhân văn & Ngôn ngữ",
+      "statistics": "~66k SV",
+      "majors": [
+        "Ngôn ngữ Anh",
+        "Ngôn ngữ Trung Quốc",
+        "Ngôn ngữ Hàn Quốc",
+        "Ngôn ngữ Nhật",
+        "Đông phương học",
+        "Việt Nam học",
+        "Văn học / Ngữ văn"
+      ]
+    },
+    {
+      "group": "F",
+      "name": "Khoa học xã hội & Hành vi",
+      "statistics": "~33k SV",
+      "majors": [
+        "Tâm lý học",
+        "Xã hội học",
+        "Công tác xã hội",
+        "Quan hệ quốc tế",
+        "Quốc tế học"
+      ]
+    },
+    {
+      "group": "G",
+      "name": "Báo chí & Truyền thông",
+      "majors": [
+        "Báo chí",
+        "Truền thông đa phương tiện",
+        "Quan hệ công chúng (PR)",
+        "Truyền thông (Communication)"
+      ]
+    },
+    {
+      "group": "H",
+      "name": "Pháp luật",
+      "majors": [
+        "Luật",
+        "Luật kinh tế"
+      ]
+    },
+    {
+      "group": "I",
+      "name": "Khách sạn – Du lịch – Dịch vụ",
+      "statistics": "~29k SV",
+      "majors": [
+        "Quản trị khách sạn",
+        "Quản trị dịch vụ du lịch & lữ hành",
+        "Quản trị nhà hàng & dịch vụ ăn uống"
+      ]
+    },
+    {
+      "group": "J",
+      "name": "Sư phạm",
+      "note": "Đang nóng trở lại nhờ Luật Nhà giáo - số lượng thí sinh đăng ký và nhập học cao",
+      "majors": [
+        "Giáo dục Tiểu học",
+        "Giáo dục Mầm non",
+        "Sư phạm Tiếng Anh"
+      ]
+    },
+    {
+      "group": "K",
+      "name": "Nghệ thuật – Thiết kế & Khác",
+      "majors": [
+        "Thiết kế đồ họa",
+        "Thú y"
+      ]
+    }
+  ]
+}
