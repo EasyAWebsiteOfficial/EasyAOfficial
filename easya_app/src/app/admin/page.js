@@ -3,7 +3,7 @@
 // -*- coding: utf-8 -*-
 import React, { useState, useEffect } from 'react';
 
-// Pricing config matching homepage exactly to calculate manual leads
+// Service configurations matching homepage pricing rules exactly
 const SERVICES = [
   { value: 'data', name: 'Thu Thập Dữ Liệu', price: 200000, unit: 'Mẫu' },
   { value: 'plagiarism', name: 'Kiểm Tra Đạo Văn (Turnitin)', price: 50000, unit: 'Bài' },
@@ -27,24 +27,34 @@ const DEADLINES = [
   { value: 'urgent', name: 'Hỏa Tốc (Dưới 3 ngày)', multiplier: 1.5 }
 ];
 
-export default function EasyAAdminDashboard() {
-  // Authentication
+// Odoo stages configuration
+const ODOO_STAGES = [
+  { key: 'new', name: 'Mới (New)', color: '#2563eb' },
+  { key: 'contacting', name: 'Đang tư vấn (Contacting)', color: '#eab308' },
+  { key: 'completed', name: 'Đã chốt (Won)', color: '#16a34a' },
+  { key: 'cancelled', name: 'Đã hủy (Lost)', color: '#dc2626' }
+];
+
+export default function EasyAOdooAdminDashboard() {
+  // Authentication state
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [passcode, setPasscode] = useState('');
   const [authError, setAuthError] = useState('');
 
-  // Leads and loading state
+  // CRM Layout view toggler: 'kanban' or 'list' (Odoo default is kanban)
+  const [currentView, setCurrentView] = useState('kanban');
+
+  // Leads and system state
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isOffline, setIsOffline] = useState(false);
 
-  // Filter & Search states
+  // Filters & Search
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState('all');
   const [serviceFilter, setServiceFilter] = useState('all');
 
-  // Manual Lead Creation Form states
+  // Manual Lead creation form popup
   const [showAddForm, setShowAddForm] = useState(false);
   const [newLeadName, setNewLeadName] = useState('');
   const [newLeadPhone, setNewLeadPhone] = useState('');
@@ -57,11 +67,11 @@ export default function EasyAAdminDashboard() {
   const [newLeadNotes, setNewLeadNotes] = useState('');
   const [formIsSubmitting, setFormIsSubmitting] = useState(false);
 
-  // Active note editing states
+  // Lead inline note editing states
   const [editingNoteId, setEditingNoteId] = useState(null);
   const [editingNoteText, setEditingNoteText] = useState('');
 
-  // Handle local session storage for passcode so user doesn't have to retype constantly
+  // Check login session storage
   useEffect(() => {
     const savedAuth = localStorage.getItem('easya_admin_auth');
     if (savedAuth === 'true') {
@@ -70,7 +80,7 @@ export default function EasyAAdminDashboard() {
     }
   }, []);
 
-  // Fetch leads from PostgreSQL API
+  // Fetch all leads from the backend PostgreSQL serverless API
   const fetchLeads = async () => {
     setLoading(true);
     setError('');
@@ -81,45 +91,43 @@ export default function EasyAAdminDashboard() {
         setLeads(data.leads);
         setIsOffline(data.offline || false);
       } else {
-        setError(data.error || 'Không thể tải danh sách leads.');
+        setError(data.error || 'Lỗi tải danh sách leads.');
       }
     } catch (e) {
       console.error(e);
-      setError('Lỗi kết nối API Serverless.');
+      setError('Lỗi kết nối đến máy chủ API.');
     } finally {
       setLoading(false);
     }
   };
 
-  // Authenticate Admin Passcode
+  // Login handler
   const handleLogin = (e) => {
     e.preventDefault();
-    // Valid passcodes: '0901374245' (account password) or 'easya2026'
     if (passcode === '0901374245' || passcode === 'easya2026') {
       setIsAuthenticated(true);
       setAuthError('');
       localStorage.setItem('easya_admin_auth', 'true');
       fetchLeads();
     } else {
-      setAuthError('Mã passcode không chính xác. Vui lòng nhập lại!');
+      setAuthError('Mã passcode bảo mật không chính xác!');
     }
   };
 
-  // Sign out
+  // Sign out handler
   const handleLogout = () => {
     setIsAuthenticated(false);
     setPasscode('');
     localStorage.removeItem('easya_admin_auth');
   };
 
-  // Convert estimate strings (e.g., "1.500.000 đ") to pure integers for summation
+  // Helpers to parse currency estimates for computations
   const parsePrice = (priceStr) => {
     if (!priceStr) return 0;
     const clean = priceStr.replace(/[^0-9]/g, '');
     return parseInt(clean) || 0;
   };
 
-  // Format integer to VND currency
   const formatVND = (amount) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' })
       .format(amount)
@@ -137,7 +145,7 @@ export default function EasyAAdminDashboard() {
     return "0 đ";
   };
 
-  // Handle lead status updates
+  // Inline patch request to shift lead status instantly (dragging cards simulation)
   const handleStatusChange = async (id, newStatus) => {
     try {
       const response = await fetch(`/api/admin/leads/${id}`, {
@@ -147,17 +155,16 @@ export default function EasyAAdminDashboard() {
       });
       const data = await response.json();
       if (data.success) {
-        // Optimistically update UI
         setLeads(leads.map(l => l.id === id ? { ...l, status: newStatus } : l));
       } else {
-        alert('Cập nhật trạng thái thất bại: ' + (data.error || ''));
+        alert('Lỗi cập nhật: ' + (data.error || ''));
       }
     } catch (e) {
       alert('Lỗi mạng khi cập nhật trạng thái.');
     }
   };
 
-  // Handle note updates
+  // Inline note saving
   const handleNoteSave = async (id) => {
     try {
       const response = await fetch(`/api/admin/leads/${id}`, {
@@ -170,16 +177,16 @@ export default function EasyAAdminDashboard() {
         setLeads(leads.map(l => l.id === id ? { ...l, admin_notes: editingNoteText } : l));
         setEditingNoteId(null);
       } else {
-        alert('Cập nhật ghi chú thất bại: ' + (data.error || ''));
+        alert('Lỗi cập nhật ghi chú: ' + (data.error || ''));
       }
     } catch (e) {
-      alert('Lỗi mạng khi cập nhật ghi chú.');
+      alert('Lỗi kết nối mạng.');
     }
   };
 
-  // Handle lead deletions
+  // Lead deletions
   const handleDeleteLead = async (id) => {
-    if (!confirm('Bạn có chắc chắn muốn xóa lead này? Thao tác không thể khôi phục.')) return;
+    if (!confirm('Bạn có chắc chắn muốn xóa lead này khỏi Odoo CRM? Thao tác không thể khôi phục.')) return;
     try {
       const response = await fetch(`/api/admin/leads/${id}`, {
         method: 'DELETE'
@@ -188,18 +195,18 @@ export default function EasyAAdminDashboard() {
       if (data.success) {
         setLeads(leads.filter(l => l.id !== id));
       } else {
-        alert('Xóa lead thất bại: ' + (data.error || ''));
+        alert('Xóa lead thất bại.');
       }
     } catch (e) {
-      alert('Lỗi mạng khi xóa lead.');
+      alert('Lỗi kết nối mạng khi xóa.');
     }
   };
 
-  // Handle manual lead registration submission
+  // Lead creation handler
   const handleManualSubmit = async (e) => {
     e.preventDefault();
     if (!newLeadName || !newLeadPhone) {
-      alert('Vui lòng nhập tên học viên và số điện thoại!');
+      alert('Vui lòng điền họ tên học viên và số điện thoại!');
       return;
     }
 
@@ -212,7 +219,7 @@ export default function EasyAAdminDashboard() {
       university: newLeadUni,
       service: selectedService?.name || '',
       level: LEVELS.find(l => l.value === newLeadLevel)?.name || '',
-      qty: `${newLeadQty} ${selectedService?.unit || 'Bài'}`,
+      qty: `${newLeadQty} ${selectedService?.unit || 'Mẫu'}`,
       deadline: DEADLINES.find(d => d.value === newLeadDeadline)?.name || '',
       price_estimate: calculateEstimate(),
       status: newLeadStatus,
@@ -227,999 +234,1077 @@ export default function EasyAAdminDashboard() {
       });
       const data = await response.json();
       if (data.success) {
-        alert('Thêm Lead thủ công thành công!');
-        // Reset and hide form
+        alert('Đã tạo cơ hội kinh doanh mới!');
         setNewLeadName('');
         setNewLeadPhone('');
         setNewLeadUni('');
         setNewLeadNotes('');
         setNewLeadQty(1);
         setShowAddForm(false);
-        fetchLeads(); // Reload leads
+        fetchLeads(); // Refresh database rows
       } else {
-        alert('Lỗi thêm lead: ' + (data.error || ''));
+        alert('Lỗi thêm: ' + (data.error || ''));
       }
     } catch (err) {
-      alert('Lỗi kết nối khi lưu lead mới.');
+      alert('Lỗi mạng khi lưu dữ liệu.');
     } finally {
       setFormIsSubmitting(false);
     }
   };
 
-  // Perform filtering and searching in frontend
+  // Perform search and filter
   const filteredLeads = leads.filter(l => {
     const matchSearch = 
       l.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
       l.phone.includes(searchQuery) ||
       (l.university && l.university.toLowerCase().includes(searchQuery.toLowerCase()));
     
-    const matchStatus = statusFilter === 'all' || l.status === statusFilter;
     const matchService = serviceFilter === 'all' || (l.service && l.service.includes(serviceFilter));
 
-    return matchSearch && matchStatus && matchService;
+    return matchSearch && matchService;
   });
 
-  // Calculate statistics from filtered list
-  const totalCount = filteredLeads.length;
-  const newCount = filteredLeads.filter(l => l.status === 'new' || !l.status).length;
-  const contactingCount = filteredLeads.filter(l => l.status === 'contacting').length;
-  const completedCount = filteredLeads.filter(l => l.status === 'completed').length;
-  
-  const estimatedRevenue = filteredLeads
-    .filter(l => l.status !== 'cancelled')
-    .reduce((sum, l) => sum + parsePrice(l.price_estimate), 0);
+  // Calculate sum of prices for each column (stage) to show in Odoo column headers
+  const getStageTotalRevenue = (stageKey) => {
+    return filteredLeads
+      .filter(l => (l.status || 'new') === stageKey)
+      .reduce((sum, l) => sum + parsePrice(l.price_estimate), 0);
+  };
 
-  const conversionRate = totalCount > 0 ? ((completedCount / totalCount) * 100).toFixed(1) : "0.0";
+  const getStageCount = (stageKey) => {
+    return filteredLeads.filter(l => (l.status || 'new') === stageKey).length;
+  };
 
-  // Login Form Render
+  // Login Page Render (Odoo style login)
   if (!isAuthenticated) {
     return (
-      <div className="admin-login-overlay">
+      <div className="odoo-login-container">
         <style jsx global>{`
-          .admin-login-overlay {
+          .odoo-login-container {
             min-height: 100vh;
-            background: radial-gradient(circle at top, #0f243a 0%, #050a12 100%);
+            background: #f8f9fa;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Inter', system-ui, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             padding: 1.5rem;
           }
-          .login-card {
-            background: rgba(13, 27, 42, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 195, 49, 0.15);
+          .odoo-login-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
             padding: 2.5rem;
-            border-radius: 20px;
             width: 100%;
-            max-width: 420px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+            max-width: 400px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
             text-align: center;
-            color: #fefeff;
           }
-          .login-icon {
-            font-size: 3rem;
-            color: #ffc331;
-            margin-bottom: 1rem;
-            display: inline-block;
-            animation: pulse 2s infinite ease-in-out;
-          }
-          @keyframes pulse {
-            0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,195,49,0.2)); }
-            50% { transform: scale(1.05); filter: drop-shadow(0 0 12px rgba(255,195,49,0.5)); }
-            100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(255,195,49,0.2)); }
-          }
-          .login-card h2 {
-            margin-bottom: 0.5rem;
+          .odoo-logo-brand {
+            font-size: 2.5rem;
             font-weight: 800;
-            color: #ffc331;
+            color: #714B67;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1px;
           }
-          .login-card p {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.6);
+          .odoo-logo-brand span {
+            color: #00A09D;
+          }
+          .odoo-login-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #495057;
             margin-bottom: 2rem;
           }
-          .form-group {
+          .odoo-form-group {
             margin-bottom: 1.5rem;
             text-align: left;
           }
-          .form-group label {
+          .odoo-form-group label {
             display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #6c757d;
             margin-bottom: 0.5rem;
-            color: rgba(255,255,255,0.8);
           }
-          .passcode-input {
+          .odoo-input {
             width: 100%;
-            padding: 0.85rem 1rem;
-            background: rgba(5, 10, 18, 0.6);
-            border: 1px solid rgba(255, 195, 49, 0.3);
-            border-radius: 8px;
-            color: #fefeff;
-            font-size: 1.1rem;
-            letter-spacing: 3px;
-            text-align: center;
-            transition: all 0.3s;
+            padding: 0.65rem 0.85rem;
+            background: #ffffff;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            color: #495057;
+            font-size: 0.95rem;
+            transition: border-color 0.25s, box-shadow 0.25s;
           }
-          .passcode-input:focus {
+          .odoo-input:focus {
             outline: none;
-            border-color: #ffc331;
-            box-shadow: 0 0 10px rgba(255, 195, 49, 0.25);
+            border-color: #714B67;
+            box-shadow: 0 0 0 3px rgba(113, 75, 103, 0.15);
           }
-          .btn-login {
+          .btn-odoo-primary {
             width: 100%;
-            padding: 0.85rem;
-            background: linear-gradient(135deg, #ffc331 0%, #d49d00 100%);
+            padding: 0.7rem;
+            background: #714B67;
             border: none;
-            border-radius: 8px;
-            color: #050a12;
+            border-radius: 4px;
+            color: #ffffff;
             font-weight: 700;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: background 0.25s;
           }
-          .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 195, 49, 0.4);
+          .btn-odoo-primary:hover {
+            background: #5c3b53;
           }
-          .auth-error {
-            color: #ff6b6b;
-            font-size: 0.8rem;
+          .odoo-error {
+            color: #dc3545;
+            font-size: 0.85rem;
             margin-top: 1rem;
             font-weight: 600;
           }
         `}</style>
-        <div className="login-card">
-          <span className="login-icon">🔑</span>
-          <h2>Cổng Quản Trị Easy A</h2>
-          <p>Nhập mã passcode bảo mật để kết nối dữ liệu Odoo CRM</p>
+        <div className="odoo-login-card">
+          <div className="odoo-logo-brand">odoo<span>.crm</span></div>
+          <h3>Easy A Administration</h3>
           <form onSubmit={handleLogin}>
-            <div className="form-group">
-              <label>Passcode Quản Trị Viên</label>
+            <div className="odoo-form-group">
+              <label>Mã bảo mật Passcode</label>
               <input
                 type="password"
-                className="passcode-input"
+                className="odoo-input"
                 value={passcode}
                 onChange={(e) => setPasscode(e.target.value)}
-                placeholder="••••••••"
+                placeholder="Nhập passcode quản trị"
                 required
                 autoFocus
               />
             </div>
-            <button type="submit" className="btn-login">ĐĂNG NHẬP HỆ THỐNG</button>
-            {authError && <div className="auth-error">{authError}</div>}
+            <button type="submit" className="btn-odoo-primary">ĐĂNG NHẬP (LOG IN)</button>
+            {authError && <div className="odoo-error">⚠️ {authError}</div>}
           </form>
         </div>
       </div>
     );
   }
 
-  // Dashboard Main Render
   return (
-    <div className="admin-dashboard-container">
+    <div className="odoo-crm-viewport">
+      {/* GLOBAL ODOO CRM STYLE ACCENTS */}
       <style jsx global>{`
-        .admin-dashboard-container {
+        .odoo-crm-viewport {
           min-height: 100vh;
-          background: #050a12;
-          color: #e2e8f0;
-          font-family: 'Inter', system-ui, -apple-system, sans-serif;
-          padding: 2rem;
+          background: #f8f9fa;
+          color: #212529;
+          font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+          display: flex;
+          flex-direction: column;
+          font-size: 13px;
         }
-        .admin-header {
+
+        /* 1. Top navigation header */
+        .odoo-top-nav {
+          height: 46px;
+          background: #714b67;
           display: flex;
           justify-content: space-between;
           align-items: center;
-          margin-bottom: 2rem;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-          padding-bottom: 1.5rem;
+          padding: 0 1rem;
+          color: #ffffff;
+          box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-        .admin-title-box h1 {
-          font-size: 1.8rem;
-          font-weight: 800;
-          color: #ffc331;
+        .nav-left-branding {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
+          gap: 12px;
         }
-        .admin-title-box p {
-          font-size: 0.85rem;
-          color: rgba(255,255,255,0.5);
-          margin-top: 0.25rem;
+        .nav-waffle-menu {
+          font-size: 1.2rem;
+          cursor: pointer;
+          opacity: 0.85;
         }
-        .header-actions {
-          display: flex;
-          gap: 1rem;
-        }
-        .btn-action-primary {
-          background: linear-gradient(135deg, #ffc331 0%, #d49d00 100%);
-          color: #050a12;
-          border: none;
-          padding: 0.6rem 1.2rem;
-          border-radius: 8px;
+        .nav-app-name {
           font-weight: 700;
-          font-size: 0.85rem;
-          cursor: pointer;
+          font-size: 14px;
+        }
+        .nav-app-menu-links {
           display: flex;
-          align-items: center;
-          gap: 0.5rem;
-          transition: all 0.3s;
+          gap: 15px;
+          list-style: none;
+          font-size: 13px;
+          margin-left: 20px;
         }
-        .btn-action-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(255,195,49,0.3);
-        }
-        .btn-action-secondary {
-          background: rgba(255,255,255,0.05);
-          border: 1px solid rgba(255,255,255,0.1);
-          color: #e2e8f0;
-          padding: 0.6rem 1.2rem;
-          border-radius: 8px;
-          font-weight: 600;
-          font-size: 0.85rem;
+        .nav-app-menu-links li {
+          opacity: 0.8;
           cursor: pointer;
-          transition: all 0.3s;
+          padding: 4px 8px;
+          border-radius: 3px;
         }
-        .btn-action-secondary:hover {
+        .nav-app-menu-links li.active {
+          opacity: 1;
+          font-weight: 600;
           background: rgba(255,255,255,0.1);
         }
-        
-        /* Stats Grid */
-        .stats-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-          gap: 1.5rem;
-          margin-bottom: 2rem;
+        .nav-right-user {
+          display: flex;
+          align-items: center;
+          gap: 15px;
+          font-size: 13px;
         }
-        .stat-card {
-          background: rgba(13, 27, 42, 0.4);
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 16px;
-          padding: 1.25rem;
+        .database-indicator {
+          background: rgba(0,0,0,0.25);
+          padding: 3px 8px;
+          border-radius: 12px;
+          font-size: 11px;
+          font-weight: 600;
+        }
+
+        /* 2. Control panel & breadcrumbs */
+        .odoo-control-panel {
+          background: #ffffff;
+          border-bottom: 1px solid #dee2e6;
+          padding: 10px 15px;
           display: flex;
           flex-direction: column;
-          position: relative;
-          overflow: hidden;
+          gap: 10px;
         }
-        .stat-card::after {
-          content: '';
-          position: absolute;
-          width: 60px;
-          height: 60px;
-          background: rgba(255, 195, 49, 0.03);
-          border-radius: 50%;
-          right: -10px;
-          top: -10px;
-        }
-        .stat-card.revenue-card::after {
-          background: rgba(16, 185, 129, 0.05);
-          border: 1px solid rgba(16, 185, 129, 0.1);
-        }
-        .stat-card-title {
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: rgba(255,255,255,0.4);
-          margin-bottom: 0.5rem;
-        }
-        .stat-card-value {
-          font-size: 1.6rem;
-          font-weight: 800;
-          color: #fefeff;
-        }
-        .stat-card-value.yellow { color: #ffc331; }
-        .stat-card-value.green { color: #10b981; }
-        .stat-card-value.blue { color: #3b82f6; }
-        
-        /* Control Panel Filters */
-        .control-panel {
-          background: rgba(13, 27, 42, 0.3);
-          border: 1px solid rgba(255,255,255,0.04);
-          border-radius: 16px;
-          padding: 1.25rem;
-          margin-bottom: 1.5rem;
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-          gap: 1rem;
+        .control-row-1 {
+          display: flex;
+          justify-content: space-between;
           align-items: center;
         }
-        .search-input-box {
-          position: relative;
+        .breadcrumb-box {
+          font-size: 18px;
+          color: #495057;
         }
-        .search-input {
-          width: 100%;
-          background: rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px;
-          padding: 0.6rem 1rem;
-          color: #fefeff;
-          font-size: 0.85rem;
-          transition: all 0.3s;
-        }
-        .search-input:focus {
-          outline: none;
-          border-color: #ffc331;
-          box-shadow: 0 0 8px rgba(255,195,49,0.1);
-        }
-        .filter-select {
-          background: rgba(0,0,0,0.3);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px;
-          padding: 0.6rem 1rem;
-          color: #fefeff;
-          font-size: 0.85rem;
+        .breadcrumb-root {
+          color: #714b67;
+          font-weight: 700;
           cursor: pointer;
         }
-        .filter-select:focus {
+        .breadcrumb-separator {
+          margin: 0 8px;
+          color: #adb5bd;
+        }
+        .breadcrumb-active {
+          color: #212529;
+          font-weight: 500;
+        }
+        .search-and-filters {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          width: 320px;
+        }
+        .odoo-search-bar {
+          width: 100%;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          padding: 5px 10px;
+          font-size: 13px;
+          background: #fdfdfd;
+        }
+        .odoo-search-bar:focus {
           outline: none;
-          border-color: #ffc331;
+          border-color: #714b67;
+        }
+        .control-row-2 {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .action-buttons-group {
+          display: flex;
+          gap: 8px;
+          align-items: center;
+        }
+        .btn-odoo-create {
+          background: #00A09D;
+          color: #ffffff;
+          border: 1px solid #00A09D;
+          font-weight: 600;
+          padding: 5px 14px;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+        }
+        .btn-odoo-create:hover {
+          background: #00878A;
+        }
+        .btn-odoo-secondary {
+          background: #ffffff;
+          color: #495057;
+          border: 1px solid #ced4da;
+          padding: 5px 12px;
+          border-radius: 4px;
+          font-size: 13px;
+          cursor: pointer;
+          font-weight: 500;
+        }
+        .btn-odoo-secondary:hover {
+          background: #f8f9fa;
+          border-color: #b5b5b5;
+        }
+        .view-switcher-group {
+          display: flex;
+          background: #ffffff;
+          border: 1px solid #ced4da;
+          border-radius: 4px;
+          overflow: hidden;
+        }
+        .btn-view-toggle {
+          background: none;
+          border: none;
+          padding: 6px 12px;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          color: #495057;
+          font-size: 14px;
+        }
+        .btn-view-toggle.active {
+          background: #e9ecef;
+          color: #714b67;
+          font-weight: 700;
+        }
+        .btn-view-toggle:not(:last-child) {
+          border-right: 1px solid #ced4da;
+        }
+
+        /* 3. Main Workspace Container */
+        .odoo-workspace {
+          flex: 1;
+          padding: 15px;
+          overflow-y: auto;
+        }
+
+        /* 4. Kanban Pipeline View */
+        .odoo-kanban-pipeline {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
+          align-items: start;
+          min-height: 500px;
+        }
+        .kanban-column {
+          background: #eff1f5;
+          border-radius: 6px;
+          padding: 10px;
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          border: 1px solid #e2e5ec;
+        }
+        .kanban-column-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding-bottom: 8px;
+          border-bottom: 2px solid rgba(113, 75, 103, 0.2);
+          margin-bottom: 5px;
+        }
+        .column-title {
+          font-weight: 700;
+          font-size: 13px;
+          color: #3e3f42;
+        }
+        .column-meta-info {
+          font-size: 11px;
+          font-weight: 700;
+          color: #714b67;
+          background: rgba(113, 75, 103, 0.08);
+          padding: 2px 6px;
+          border-radius: 4px;
+          text-align: right;
+        }
+        .kanban-cards-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          min-height: 400px;
+        }
+        .kanban-card {
+          background: #ffffff;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
+          padding: 12px;
+          box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+          position: relative;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .kanban-card:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 6px rgba(0,0,0,0.08);
+          border-color: #714b67;
+        }
+        .card-student-name {
+          font-weight: 700;
+          color: #212529;
+          font-size: 13px;
+        }
+        .card-uni-text {
+          font-size: 11px;
+          color: #714b67;
+          font-weight: 600;
+        }
+        .card-service-tag {
+          font-size: 11px;
+          color: #495057;
+          font-weight: 500;
+          background: #e9ecef;
+          padding: 2px 6px;
+          border-radius: 3px;
+          display: inline-block;
+          margin-top: 2px;
+        }
+        .card-details-row {
+          font-size: 11px;
+          color: #6c757d;
+          margin-top: 2px;
+        }
+        .card-footer {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 8px;
+          border-top: 1px dashed #e9ecef;
+          padding-top: 6px;
+        }
+        .card-price {
+          font-weight: 800;
+          color: #00A09D;
+          font-size: 13px;
+        }
+        .card-actions-quick {
+          display: flex;
+          gap: 4px;
+        }
+        .btn-card-quick {
+          background: #f8f9fa;
+          border: 1px solid #ced4da;
+          border-radius: 3px;
+          padding: 1px 4px;
+          font-size: 10px;
+          cursor: pointer;
+        }
+        .btn-card-quick:hover {
+          background: #e9ecef;
+          color: #714b67;
+        }
+        .initials-avatar {
+          width: 18px;
+          height: 18px;
+          background: #714b67;
+          color: #ffffff;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 9px;
+          font-weight: 700;
         }
         
-        /* Table styles */
-        .table-container {
-          background: rgba(13, 27, 42, 0.3);
-          border: 1px solid rgba(255,255,255,0.05);
-          border-radius: 16px;
+        /* 5. List View Table styles */
+        .odoo-list-container {
+          background: #ffffff;
+          border: 1px solid #dee2e6;
+          border-radius: 4px;
           overflow-x: auto;
-          box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+          box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-        .leads-table {
+        .odoo-table {
           width: 100%;
           border-collapse: collapse;
           text-align: left;
-          font-size: 0.85rem;
         }
-        .leads-table th {
-          background: rgba(10, 54, 94, 0.25);
-          color: rgba(255,255,255,0.7);
+        .odoo-table th {
+          background: #f8f9fa;
+          color: #495057;
           font-weight: 700;
-          padding: 1rem;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
+          padding: 8px 12px;
+          border-bottom: 2px solid #dee2e6;
+          font-size: 12px;
           white-space: nowrap;
         }
-        .leads-table td {
-          padding: 1rem;
-          border-bottom: 1px solid rgba(255,255,255,0.05);
+        .odoo-table td {
+          padding: 8px 12px;
+          border-bottom: 1px solid #e9ecef;
+          color: #212529;
           vertical-align: middle;
         }
-        .leads-table tr:hover {
-          background: rgba(255,255,255,0.02);
+        .odoo-table tr:hover {
+          background: #f1f3f5;
         }
-        .student-name {
+        .list-price {
           font-weight: 700;
-          color: #fefeff;
+          color: #00A09D;
         }
-        .student-phone {
-          color: rgba(255,255,255,0.6);
-          font-family: monospace;
-        }
-        .university-tag {
-          font-size: 0.75rem;
-          background: rgba(59, 130, 246, 0.1);
-          color: #93c5fd;
-          padding: 0.25rem 0.5rem;
-          border-radius: 6px;
-          display: inline-block;
-        }
-        .service-name {
-          font-weight: 600;
-          color: #e2e8f0;
-        }
-        .qty-deadline {
-          font-size: 0.75rem;
-          color: rgba(255,255,255,0.45);
-          margin-top: 0.25rem;
-        }
-        .price-estimate {
+        .list-badge-status {
+          padding: 2px 8px;
+          border-radius: 10px;
+          font-size: 10px;
           font-weight: 700;
-          color: #10b981;
+          text-transform: uppercase;
         }
+        .list-badge-status.new { background: #e0f2fe; color: #0369a1; }
+        .list-badge-status.contacting { background: #fef3c7; color: #b45309; }
+        .list-badge-status.completed { background: #dcfce7; color: #15803d; }
+        .list-badge-status.cancelled { background: #fee2e2; color: #b91c1c; }
         
-        /* Badges status */
-        .status-select {
+        .list-status-select {
           border: none;
           background: transparent;
+          font-weight: 700;
           color: inherit;
-          font-size: inherit;
-          font-weight: inherit;
           cursor: pointer;
-          padding-right: 0.5rem;
-        }
-        .status-select:focus {
           outline: none;
         }
-        .badge-status {
-          padding: 0.35rem 0.75rem;
-          border-radius: 9999px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          display: inline-flex;
-          align-items: center;
-          gap: 0.25rem;
-        }
-        .badge-status.new {
-          background: rgba(59, 130, 246, 0.15);
-          color: #60a5fa;
-          border: 1px solid rgba(59, 130, 246, 0.2);
-        }
-        .badge-status.contacting {
-          background: rgba(245, 158, 11, 0.15);
-          color: #fbbf24;
-          border: 1px solid rgba(245, 158, 11, 0.2);
-        }
-        .badge-status.completed {
-          background: rgba(16, 185, 129, 0.15);
-          color: #34d399;
-          border: 1px solid rgba(16, 185, 129, 0.2);
-        }
-        .badge-status.cancelled {
-          background: rgba(239, 68, 68, 0.15);
-          color: #f87171;
-          border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-        
-        /* Notes section */
-        .notes-cell {
-          max-width: 200px;
-        }
-        .notes-content {
-          font-size: 0.75rem;
-          color: rgba(255,255,255,0.65);
-          line-height: 1.4;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-        .notes-empty {
-          font-style: italic;
-          color: rgba(255,255,255,0.3);
-          font-size: 0.75rem;
-        }
-        .btn-note-edit {
-          background: none;
-          border: none;
-          color: #ffc331;
-          font-size: 0.75rem;
-          font-weight: 600;
-          cursor: pointer;
-          padding: 0;
-          margin-top: 0.25rem;
-          display: inline-block;
-        }
-        .note-edit-area {
-          width: 100%;
-          background: rgba(0,0,0,0.5);
-          border: 1px solid rgba(255,195,49,0.3);
-          color: #fefeff;
-          font-size: 0.75rem;
-          padding: 0.4rem;
-          border-radius: 6px;
-          resize: vertical;
-          min-height: 50px;
-        }
-        .note-edit-actions {
-          display: flex;
-          gap: 0.5rem;
-          margin-top: 0.25rem;
-        }
-        .btn-note-save {
-          background: #ffc331;
-          color: #050a12;
-          border: none;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          font-weight: 700;
-          cursor: pointer;
-        }
-        .btn-note-cancel {
-          background: rgba(255,255,255,0.1);
-          color: #e2e8f0;
-          border: none;
-          padding: 0.2rem 0.5rem;
-          border-radius: 4px;
-          font-size: 0.7rem;
-          cursor: pointer;
-        }
-        
-        /* Action buttons */
-        .btn-delete {
-          background: none;
-          border: none;
-          color: rgba(239, 68, 68, 0.6);
-          font-size: 1.1rem;
-          cursor: pointer;
-          transition: all 0.3s;
-          padding: 0.25rem 0.5rem;
-          border-radius: 6px;
-        }
-        .btn-delete:hover {
-          color: #ef4444;
-          background: rgba(239, 68, 68, 0.1);
-        }
-        
-        /* Modal Add Lead */
-        .add-lead-modal-backdrop {
+
+        /* 6. Admin Form Popups */
+        .odoo-modal-backdrop {
           position: fixed;
           top: 0; left: 0; right: 0; bottom: 0;
-          background: rgba(0,0,0,0.75);
-          backdrop-filter: blur(8px);
+          background: rgba(0, 0, 0, 0.5);
           display: flex;
           align-items: center;
           justify-content: center;
           z-index: 1000;
           padding: 1.5rem;
         }
-        .add-lead-modal {
-          background: #0d1b2a;
-          border: 1px solid rgba(255,195,49,0.2);
-          border-radius: 20px;
-          padding: 2rem;
+        .odoo-modal {
+          background: #ffffff;
+          border-radius: 6px;
+          box-shadow: 0 10px 25px rgba(0,0,0,0.15);
           width: 100%;
-          max-width: 600px;
-          box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+          max-width: 650px;
           max-height: 90vh;
           overflow-y: auto;
+          border: 1px solid #714b67;
         }
-        .modal-title {
-          font-size: 1.4rem;
-          font-weight: 800;
-          color: #ffc331;
-          margin-bottom: 1.5rem;
-          border-bottom: 1px solid rgba(255,255,255,0.08);
-          padding-bottom: 0.75rem;
+        .odoo-modal-header {
+          background: #f8f9fa;
+          padding: 12px 15px;
+          border-bottom: 1px solid #dee2e6;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
         }
-        .modal-form-grid {
+        .odoo-modal-title {
+          font-size: 15px;
+          font-weight: 700;
+          color: #714b67;
+        }
+        .btn-modal-close {
+          background: none;
+          border: none;
+          font-size: 16px;
+          cursor: pointer;
+          color: #6c757d;
+        }
+        .odoo-modal-body {
+          padding: 20px;
+        }
+        .odoo-form-layout {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 1rem;
-          margin-bottom: 1.5rem;
+          gap: 15px;
         }
-        .modal-form-grid.full-width {
-          grid-template-columns: 1fr;
-        }
-        .modal-field {
-          display: flex;
-          flex-direction: column;
-          gap: 0.35rem;
-        }
-        .modal-field.full {
+        .odoo-form-col-full {
           grid-column: span 2;
         }
-        .modal-field label {
-          font-size: 0.75rem;
-          text-transform: uppercase;
-          letter-spacing: 0.5px;
-          color: rgba(255,255,255,0.6);
+        .odoo-label-static {
+          font-weight: 700;
+          font-size: 12px;
+          color: #495057;
+          margin-bottom: 4px;
+          display: block;
         }
-        .modal-input {
-          background: rgba(0,0,0,0.4);
-          border: 1px solid rgba(255,255,255,0.1);
-          border-radius: 8px;
-          padding: 0.6rem 0.85rem;
-          color: #fefeff;
-          font-size: 0.85rem;
+        .odoo-form-estimate {
+          background: #eef9f9;
+          border: 1px dashed #00A09D;
+          color: #00A09D;
+          font-weight: 800;
+          font-size: 15px;
+          padding: 8px;
+          text-align: center;
+          border-radius: 4px;
+          margin-top: 4px;
         }
-        .modal-input:focus {
-          outline: none;
-          border-color: #ffc331;
-        }
-        .modal-actions {
+        .odoo-modal-footer {
+          padding: 12px 15px;
+          background: #f8f9fa;
+          border-top: 1px solid #dee2e6;
           display: flex;
           justify-content: flex-end;
-          gap: 1rem;
-          border-top: 1px solid rgba(255,255,255,0.08);
-          padding-top: 1rem;
+          gap: 8px;
         }
-        .price-estimate-badge {
-          background: rgba(16, 185, 129, 0.1);
-          color: #34d399;
-          font-weight: 700;
-          padding: 0.6rem;
-          border-radius: 8px;
-          border: 1px dashed rgba(16, 185, 129, 0.3);
-          text-align: center;
-          font-size: 1rem;
-          margin-top: 0.25rem;
+
+        /* 7. Inline Note styling */
+        .inline-note-section {
+          background: #fff9db;
+          border: 1px solid #ffe3e3;
+          padding: 4px;
+          border-radius: 3px;
+          font-size: 11px;
+          margin-top: 3px;
         }
-        .offline-tag {
-          background: rgba(245, 158, 11, 0.2);
-          color: #fbbf24;
-          font-size: 0.75rem;
-          padding: 0.25rem 0.6rem;
-          border-radius: 6px;
-          border: 1px solid rgba(245, 158, 11, 0.3);
-          display: inline-block;
-          font-weight: 700;
+        .notes-edit-btn {
+          border: none;
+          background: none;
+          color: #714b67;
+          font-size: 10px;
+          cursor: pointer;
+          text-decoration: underline;
+        }
+        .notes-list-cell {
+          max-width: 180px;
+          font-size: 11px;
+        }
+        .btn-table-del {
+          color: #dc3545;
+          background: none;
+          border: none;
+          cursor: pointer;
+        }
+        .btn-table-del:hover {
+          text-decoration: underline;
         }
       `}</style>
 
-      {/* ADMIN HEADER */}
-      <header className="admin-header">
-        <div className="admin-title-box">
-          <h1>🎓 CRM Quản Trị Easy A</h1>
-          <p>
-            Mô phỏng Odoo CRM Backend — Đồng bộ Supabase PostgreSQL Database
-            {isOffline && <span className="offline-tag ms-2">Offline Mode</span>}
-          </p>
+      {/* ODOO TOP NAVIGATION BAR */}
+      <nav className="odoo-top-nav">
+        <div className="nav-left-branding">
+          <span className="nav-waffle-menu">☰</span>
+          <span className="nav-app-name">EasyA CRM</span>
+          <ul className="nav-app-menu-links">
+            <li className="active">Đường ống (Pipeline)</li>
+            <li onClick={() => setShowAddForm(true)}>Tạo nhanh</li>
+            <li onClick={fetchLeads}>Đồng bộ</li>
+          </ul>
         </div>
-        <div className="header-actions">
-          <button 
-            className="btn-action-primary"
-            onClick={() => setShowAddForm(true)}
-          >
-            ➕ THÊM LEAD HỌC VIÊN
-          </button>
-          <button 
-            className="btn-action-secondary"
-            onClick={fetchLeads}
-            title="Đồng bộ dữ liệu"
-          >
-            🔄 Tải Lại
-          </button>
-          <button 
-            className="btn-action-secondary"
-            onClick={handleLogout}
-            style={{ color: '#ff6b6b', borderColor: 'rgba(239, 68, 68, 0.2)' }}
-          >
-            Đăng Xuất
-          </button>
+        <div className="nav-right-user">
+          <span className="database-indicator">db: EasyAOfficial</span>
+          <span>kaitokidthomas.com@gmail.com</span>
+          <span onClick={handleLogout} style={{ cursor: 'pointer', textDecoration: 'underline', color: '#ffb3c1' }}>Đăng xuất</span>
         </div>
-      </header>
+      </nav>
 
-      {/* STATISTICS ANALYTICS CARDS */}
-      <section className="stats-grid">
-        <div className="stat-card">
-          <span className="stat-card-title">Tổng Số Lượng Leads</span>
-          <span className="stat-card-value blue">{totalCount}</span>
+      {/* ODOO SUB-HEADER / CONTROL PANEL */}
+      <div className="odoo-control-panel">
+        <div className="control-row-1">
+          <div className="breadcrumb-box">
+            <span className="breadcrumb-root">CRM</span>
+            <span className="breadcrumb-separator">/</span>
+            <span className="breadcrumb-active">Đường ống của tôi (My Pipeline)</span>
+            {isOffline && <span className="ms-2 badge bg-warning text-dark" style={{ fontSize: '10px' }}>Offline Mode</span>}
+          </div>
+          <div className="search-and-filters">
+            <input
+              type="text"
+              className="odoo-search-bar"
+              placeholder="🔍 Tìm theo tên, SĐT, trường..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </div>
         </div>
-        <div className="stat-card">
-          <span className="stat-card-title">Leads Chưa Xử Lý (New)</span>
-          <span className="stat-card-value yellow">{newCount}</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-card-title">Đang Tư Vấn Zalo/Call</span>
-          <span className="stat-card-value" style={{ color: '#fbbf24' }}>{contactingCount}</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-card-title">Đã Chốt Hợp Đồng</span>
-          <span className="stat-card-value green">{completedCount}</span>
-        </div>
-        <div className="stat-card revenue-card">
-          <span className="stat-card-title">Tổng Dự Toán Doanh Thu</span>
-          <span className="stat-card-value green">{formatVND(estimatedRevenue)}</span>
-        </div>
-        <div className="stat-card">
-          <span className="stat-card-title">Tỷ Lệ Chốt Thành Công</span>
-          <span className="stat-card-value" style={{ color: '#a855f7' }}>{conversionRate}%</span>
-        </div>
-      </section>
 
-      {/* FILTER & CONTROL PANEL */}
-      <section className="control-panel">
-        <div className="search-input-box">
-          <input
-            type="text"
-            className="search-input"
-            placeholder="🔎 Tìm học viên, SĐT, trường học..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        <div>
-          <select
-            className="filter-select"
-            style={{ width: '100%' }}
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="all">📁 Tất cả trạng thái</option>
-            <option value="new">🔵 Mới (Chưa xử lý)</option>
-            <option value="contacting">🟡 Đang tư vấn</option>
-            <option value="completed">🟢 Đã chốt đơn</option>
-            <option value="cancelled">🔴 Đã hủy</option>
-          </select>
-        </div>
-        <div>
-          <select
-            className="filter-select"
-            style={{ width: '100%' }}
-            value={serviceFilter}
-            onChange={(e) => setServiceFilter(e.target.value)}
-          >
-            <option value="all">🛠️ Tất cả Dịch Vụ</option>
-            {SERVICES.map(s => (
-              <option key={s.value} value={s.name}>{s.name}</option>
-            ))}
-          </select>
-        </div>
-      </section>
+        <div className="control-row-2">
+          <div className="action-buttons-group">
+            <button className="btn-odoo-create" onClick={() => setShowAddForm(true)}>TẠO MỚI</button>
+            <button className="btn-odoo-secondary" onClick={fetchLeads}>🔄 TẢI LẠI DỮ LIỆU</button>
+            <div>
+              <select
+                className="btn-odoo-secondary"
+                style={{ fontSize: '12px', padding: '4px 8px' }}
+                value={serviceFilter}
+                onChange={(e) => setServiceFilter(e.target.value)}
+              >
+                <option value="all">🔍 Tất cả dịch vụ</option>
+                {SERVICES.map(s => (
+                  <option key={s.value} value={s.name}>{s.name}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-      {/* MAIN LEADS DATABASE TABLE */}
-      {loading ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#ffc331' }}>
-          <i className="fa-solid fa-circle-notch fa-spin fa-2x"></i>
-          <p style={{ marginTop: '1rem', fontWeight: 600 }}>Đang truy vấn cơ sở dữ liệu PostgreSQL...</p>
+          <div className="view-switcher-group">
+            <button 
+              className={`btn-view-toggle ${currentView === 'kanban' ? 'active' : ''}`}
+              onClick={() => setCurrentView('kanban')}
+              title="Xem Kanban (Đường ống Odoo)"
+            >
+              📊 Kanban
+            </button>
+            <button 
+              className={`btn-view-toggle ${currentView === 'list' ? 'active' : ''}`}
+              onClick={() => setCurrentView('list')}
+              title="Xem Danh sách (Bảng tính Odoo)"
+            >
+              ☰ Danh sách
+            </button>
+          </div>
         </div>
-      ) : error ? (
-        <div style={{ textAlign: 'center', padding: '3rem', color: '#ff6b6b' }}>
-          <p style={{ fontWeight: 700 }}>⚠️ {error}</p>
-          <button className="btn-action-secondary mt-3" onClick={fetchLeads}>Thử lại</button>
-        </div>
-      ) : filteredLeads.length === 0 ? (
-        <div style={{ textAlign: 'center', padding: '4rem', background: 'rgba(13,27,42,0.2)', border: '1px dashed rgba(255,255,255,0.08)', borderRadius: '16px' }}>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: '1rem' }}>Không tìm thấy Lead học viên nào khớp với bộ lọc.</p>
-        </div>
-      ) : (
-        <div className="table-container">
-          <table className="leads-table">
-            <thead>
-              <tr>
-                <th style={{ width: '50px' }}>ID</th>
-                <th>Học Viên / Liên Hệ</th>
-                <th>Trường Đại Học</th>
-                <th>Dịch Vụ Chi Tiết</th>
-                <th>Phí Dự Kiến</th>
-                <th>Trạng Thái CRM</th>
-                <th>Ghi Chú Quản Trị (Odoo Style)</th>
-                <th style={{ width: '50px' }}>Tác Vụ</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredLeads.map((l) => (
-                <tr key={l.id}>
-                  {/* ID */}
-                  <td style={{ color: 'rgba(255,255,255,0.3)', fontWeight: 700 }}>#{l.id}</td>
-                  
-                  {/* Contact Info */}
-                  <td>
-                    <div className="student-name">{l.name}</div>
-                    <div className="student-phone">{l.phone}</div>
-                    <div style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.35)', marginTop: '0.15rem' }}>
-                      {l.created_at ? new Date(l.created_at).toLocaleString('vi-VN') : 'Vừa xong'}
-                    </div>
-                  </td>
-                  
-                  {/* University */}
-                  <td>
-                    <span className="university-tag">{l.university || 'Chưa cung cấp'}</span>
-                  </td>
-                  
-                  {/* Service details */}
-                  <td>
-                    <div className="service-name">{l.service}</div>
-                    <div className="qty-deadline">
-                      {l.qty} • {l.level} • {l.deadline}
-                    </div>
-                  </td>
-                  
-                  {/* Price */}
-                  <td>
-                    <span className="price-estimate">{l.price_estimate}</span>
-                  </td>
-                  
-                  {/* Status Dropdown */}
-                  <td>
-                    <span className={`badge-status ${l.status || 'new'}`}>
-                      <select 
-                        value={l.status || 'new'} 
-                        onChange={(e) => handleStatusChange(l.id, e.target.value)}
-                        className="status-select"
-                      >
-                        <option value="new">🔵 Chưa xử lý</option>
-                        <option value="contacting">🟡 Đang tư vấn</option>
-                        <option value="completed">🟢 Đã chốt đơn</option>
-                        <option value="cancelled">🔴 Đã hủy</option>
-                      </select>
-                    </span>
-                  </td>
-                  
-                  {/* Admin Notes */}
-                  <td className="notes-cell">
-                    {editingNoteId === l.id ? (
-                      <div>
-                        <textarea
-                          className="note-edit-area"
-                          value={editingNoteText}
-                          onChange={(e) => setEditingNoteText(e.target.value)}
-                          placeholder="Nhập ghi chú chi tiết..."
-                        />
-                        <div className="note-edit-actions">
-                          <button className="btn-note-save" onClick={() => handleNoteSave(l.id)}>Lưu</button>
-                          <button className="btn-note-cancel" onClick={() => setEditingNoteId(null)}>Hủy</button>
-                        </div>
+      </div>
+
+      {/* WORKSPACE AREA */}
+      <div className="odoo-workspace">
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '4rem', color: '#714b67' }}>
+            <span style={{ fontSize: '1.5rem', fontWeight: 600 }}>⌛ Đang tải dữ liệu Odoo CRM...</span>
+          </div>
+        ) : error ? (
+          <div style={{ textAlign: 'center', padding: '3rem', color: '#dc3545' }}>
+            <h4>⚠️ Lỗi đồng bộ: {error}</h4>
+            <button className="btn-odoo-create mt-2" onClick={fetchLeads}>Thử kết nối lại</button>
+          </div>
+        ) : (
+          <>
+            {/* VIEW 1: AUTHENTIC ODOO KANBAN VIEW */}
+            {currentView === 'kanban' && (
+              <div className="odoo-kanban-pipeline">
+                {ODOO_STAGES.map((stage) => {
+                  const stageLeads = filteredLeads.filter(l => (l.status || 'new') === stage.key);
+                  const stageRevenue = getStageTotalRevenue(stage.key);
+                  const stageCount = getStageCount(stage.key);
+
+                  return (
+                    <div className="kanban-column" key={stage.key}>
+                      <div className="kanban-column-header">
+                        <span className="column-title">{stage.name} ({stageCount})</span>
+                        <span className="column-meta-info">{formatVND(stageRevenue)}</span>
                       </div>
-                    ) : (
-                      <div>
-                        {l.admin_notes ? (
-                          <p className="notes-content" title={l.admin_notes}>{l.admin_notes}</p>
+
+                      <div className="kanban-cards-stack">
+                        {stageLeads.length === 0 ? (
+                          <div style={{ textAlign: 'center', padding: '2rem', color: '#adb5bd', border: '1px dashed #dee2e6', borderRadius: '4px', background: '#ffffff', fontSize: '11px' }}>
+                            Kéo thả hoặc chuyển thẻ về đây
+                          </div>
                         ) : (
-                          <span className="notes-empty">Không có ghi chú.</span>
-                        )}
-                        <div>
-                          <button 
-                            className="btn-note-edit"
-                            onClick={() => {
-                              setEditingNoteId(l.id);
-                              setEditingNoteText(l.admin_notes || '');
-                            }}
-                          >
-                            📝 Sửa ghi chú
-                          </button>
-                        </div>
-                      </div>
-                    )}
-                  </td>
-                  
-                  {/* Actions */}
-                  <td>
-                    <button 
-                      className="btn-delete"
-                      onClick={() => handleDeleteLead(l.id)}
-                      title="Xóa Lead"
-                    >
-                      🗑️
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+                          stageLeads.map((l) => (
+                            <div className="kanban-card" key={l.id}>
+                              <div className="card-student-name">{l.name}</div>
+                              <div className="card-uni-text">🎓 {l.university || 'Đại học'}</div>
+                              
+                              <div>
+                                <span className="card-service-tag">{l.service}</span>
+                              </div>
+                              
+                              <div className="card-details-row">
+                                📞 <span style={{ fontFamily: 'monospace' }}>{l.phone}</span><br />
+                                ⏱️ {l.qty} • {l.deadline}
+                              </div>
 
-      {/* POPUP MODAL: ADD LEAD MANUALLY */}
+                              {/* Ghi chú inline */}
+                              {l.admin_notes ? (
+                                <div className="inline-note-section">
+                                  <strong>Notes:</strong> {l.admin_notes}
+                                </div>
+                              ) : null}
+
+                              <div className="card-footer">
+                                <span className="card-price">{l.price_estimate}</span>
+                                
+                                <div className="card-actions-quick">
+                                  {stage.key !== 'new' && (
+                                    <button 
+                                      className="btn-card-quick" 
+                                      onClick={() => {
+                                        const currentIndex = ODOO_STAGES.findIndex(s => s.key === stage.key);
+                                        handleStatusChange(l.id, ODOO_STAGES[currentIndex - 1].key);
+                                      }}
+                                      title="Chuyển sang cột trước"
+                                    >
+                                      ◀
+                                    </button>
+                                  )}
+                                  
+                                  <button 
+                                    className="btn-card-quick"
+                                    onClick={() => {
+                                      setEditingNoteId(l.id);
+                                      setEditingNoteText(l.admin_notes || '');
+                                    }}
+                                    title="Sửa ghi chú"
+                                  >
+                                    📝
+                                  </button>
+
+                                  <button
+                                    className="btn-card-quick"
+                                    onClick={() => handleDeleteLead(l.id)}
+                                    title="Xóa Lead"
+                                    style={{ color: '#dc3545' }}
+                                  >
+                                    🗑️
+                                  </button>
+
+                                  {stage.key !== 'cancelled' && (
+                                    <button 
+                                      className="btn-card-quick"
+                                      onClick={() => {
+                                        const currentIndex = ODOO_STAGES.findIndex(s => s.key === stage.key);
+                                        handleStatusChange(l.id, ODOO_STAGES[currentIndex + 1].key);
+                                      }}
+                                      title="Chuyển sang cột sau"
+                                    >
+                                      ▶
+                                    </button>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          ))
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* VIEW 2: AUTHENTIC ODOO LIST (TREE) VIEW */}
+            {currentView === 'list' && (
+              <div className="odoo-list-container">
+                <table className="odoo-table">
+                  <thead>
+                    <tr>
+                      <th style={{ width: '40px' }}>ID</th>
+                      <th>Cơ hội/Tên Học Viên</th>
+                      <th>Điện Thoại / Zalo</th>
+                      <th>Trường Đại Học</th>
+                      <th>Dịch Vụ Đăng Ký</th>
+                      <th>Khối Lượng</th>
+                      <th>Hạn Nộp</th>
+                      <th>Cấp Học</th>
+                      <th>Phí Dự Kiến</th>
+                      <th>Giai Đoạn (Trạng Thái)</th>
+                      <th>Ghi chú</th>
+                      <th style={{ width: '40px' }}>Xóa</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {filteredLeads.map((l) => (
+                      <tr key={l.id}>
+                        <td style={{ color: '#6c757d', fontWeight: 600 }}>#{l.id}</td>
+                        <td style={{ fontWeight: 'bold' }}>{l.name}</td>
+                        <td style={{ fontFamily: 'monospace' }}>{l.phone}</td>
+                        <td>{l.university || 'N/A'}</td>
+                        <td style={{ fontWeight: 600 }}>{l.service}</td>
+                        <td>{l.qty}</td>
+                        <td>{l.deadline}</td>
+                        <td>{l.level}</td>
+                        <td className="list-price">{l.price_estimate}</td>
+                        <td>
+                          <span className={`list-badge-status ${l.status || 'new'}`}>
+                            <select
+                              value={l.status || 'new'}
+                              onChange={(e) => handleStatusChange(l.id, e.target.value)}
+                              className="list-status-select"
+                            >
+                              <option value="new">MỚI (NEW)</option>
+                              <option value="contacting">ĐANG TƯ VẤN</option>
+                              <option value="completed">ĐÃ CHỐT (WON)</option>
+                              <option value="cancelled">ĐÃ HỦY (LOST)</option>
+                            </select>
+                          </span>
+                        </td>
+                        <td className="notes-list-cell">
+                          {editingNoteId === l.id ? (
+                            <div>
+                              <textarea
+                                className="note-edit-area"
+                                value={editingNoteText}
+                                onChange={(e) => setEditingNoteText(e.target.value)}
+                              />
+                              <div className="note-edit-actions">
+                                <button className="btn-note-save" onClick={() => handleNoteSave(l.id)}>Lưu</button>
+                                <button className="btn-note-cancel" onClick={() => setEditingNoteId(null)}>Hủy</button>
+                              </div>
+                            </div>
+                          ) : (
+                            <div>
+                              <span>{l.admin_notes || <span style={{ color: '#adb5bd', fontStyle: 'italic' }}>Không có</span>}</span>
+                              <button className="notes-edit-btn ms-2" onClick={() => {
+                                setEditingNoteId(l.id);
+                                setEditingNoteText(l.admin_notes || '');
+                              }}>Sửa</button>
+                            </div>
+                          )}
+                        </td>
+                        <td>
+                          <button className="btn-table-del" onClick={() => handleDeleteLead(l.id)}>🗑️</button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* POPUP MODAL: ODOO STYLE LEAD FORM */}
       {showAddForm && (
-        <div className="add-lead-modal-backdrop" onClick={() => setShowAddForm(false)}>
-          <div className="add-lead-modal" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-title">➕ Tạo Lead Mới Thủ Công (CRM)</div>
+        <div className="odoo-modal-backdrop" onClick={() => setShowAddForm(false)}>
+          <div className="odoo-modal" onClick={(e) => e.stopPropagation()}>
+            <div className="odoo-modal-header">
+              <span className="odoo-modal-title">Tạo mới: Đường ống cơ hội Easy A</span>
+              <button className="btn-modal-close" onClick={() => setShowAddForm(false)}>✕</button>
+            </div>
             
             <form onSubmit={handleManualSubmit}>
-              <div className="modal-form-grid">
-                {/* Name */}
-                <div className="modal-field">
-                  <label>Họ &amp; Tên Học Viên</label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={newLeadName}
-                    onChange={(e) => setNewLeadName(e.target.value)}
-                    placeholder="Ví dụ: Nguyễn Văn A"
-                    required
-                  />
-                </div>
-
-                {/* Phone */}
-                <div className="modal-field">
-                  <label>Số Điện Thoại / Zalo</label>
-                  <input
-                    type="tel"
-                    className="modal-input"
-                    value={newLeadPhone}
-                    onChange={(e) => setNewLeadPhone(e.target.value)}
-                    placeholder="Ví dụ: 0987654321"
-                    required
-                  />
-                </div>
-
-                {/* University */}
-                <div className="modal-field full">
-                  <label>Trường Đại Học</label>
-                  <input
-                    type="text"
-                    className="modal-input"
-                    value={newLeadUni}
-                    onChange={(e) => setNewLeadUni(e.target.value)}
-                    placeholder="Ví dụ: Đại học Ngoại Thương (FTU)"
-                  />
-                </div>
-
-                {/* Service */}
-                <div className="modal-field">
-                  <label>Dịch Vụ Đăng Ký</label>
-                  <select
-                    className="modal-input"
-                    value={newLeadService}
-                    onChange={(e) => setNewLeadService(e.target.value)}
-                  >
-                    {SERVICES.map(s => (
-                      <option key={s.value} value={s.value}>{s.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Level */}
-                <div className="modal-field">
-                  <label>Cấp Độ</label>
-                  <select
-                    className="modal-input"
-                    value={newLeadLevel}
-                    onChange={(e) => setNewLeadLevel(e.target.value)}
-                  >
-                    {LEVELS.map(l => (
-                      <option key={l.value} value={l.value}>{l.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Quantity */}
-                <div className="modal-field">
-                  <label>Khối Lượng ({SERVICES.find(s => s.value === newLeadService)?.unit || 'Đề tài'})</label>
-                  <input
-                    type="number"
-                    className="modal-input"
-                    value={newLeadQty}
-                    onChange={(e) => setNewLeadQty(Math.max(1, parseInt(e.target.value) || 1))}
-                    min="1"
-                    required
-                  />
-                </div>
-
-                {/* Deadline */}
-                <div className="modal-field">
-                  <label>Thời Hạn</label>
-                  <select
-                    className="modal-input"
-                    value={newLeadDeadline}
-                    onChange={(e) => setNewLeadDeadline(e.target.value)}
-                  >
-                    {DEADLINES.map(d => (
-                      <option key={d.value} value={d.value}>{d.name}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* Status */}
-                <div className="modal-field">
-                  <label>Trạng Thái Ban Đầu</label>
-                  <select
-                    className="modal-input"
-                    value={newLeadStatus}
-                    onChange={(e) => setNewLeadStatus(e.target.value)}
-                  >
-                    <option value="new">🔵 Chưa xử lý</option>
-                    <option value="contacting">🟡 Đang tư vấn</option>
-                    <option value="completed">🟢 Đã chốt đơn</option>
-                    <option value="cancelled">🔴 Đã hủy</option>
-                  </select>
-                </div>
-
-                {/* Fee Estimate */}
-                <div className="modal-field">
-                  <label>Phí Dự Kiến (Hệ Thống Tự Tính)</label>
-                  <div className="price-estimate-badge">
-                    {calculateEstimate()}
+              <div className="odoo-modal-body">
+                <div className="odoo-form-layout">
+                  {/* Name */}
+                  <div>
+                    <label className="odoo-label-static">Tên học viên (Lead Name)</label>
+                    <input
+                      type="text"
+                      className="odoo-input"
+                      value={newLeadName}
+                      onChange={(e) => setNewLeadName(e.target.value)}
+                      placeholder="Ví dụ: Nguyễn Thị Hoa"
+                      required
+                    />
                   </div>
-                </div>
 
-                {/* Notes */}
-                <div className="modal-field full">
-                  <label>Ghi Chú Quản Trị</label>
-                  <textarea
-                    className="modal-input"
-                    style={{ minHeight: '60px', resize: 'vertical' }}
-                    value={newLeadNotes}
-                    onChange={(e) => setNewLeadNotes(e.target.value)}
-                    placeholder="Nhập các chi tiết liên lạc, ghi chú thỏa thuận hoặc lưu ý riêng..."
-                  />
+                  {/* Phone */}
+                  <div>
+                    <label className="odoo-label-static">Số điện thoại / Zalo</label>
+                    <input
+                      type="tel"
+                      className="odoo-input"
+                      value={newLeadPhone}
+                      onChange={(e) => setNewLeadPhone(e.target.value)}
+                      placeholder="Ví dụ: 0987654321"
+                      required
+                    />
+                  </div>
+
+                  {/* University */}
+                  <div className="odoo-form-col-full">
+                    <label className="odoo-label-static">Trường đại học</label>
+                    <input
+                      type="text"
+                      className="odoo-input"
+                      value={newLeadUni}
+                      onChange={(e) => setNewLeadUni(e.target.value)}
+                      placeholder="Ví dụ: Đại học Quốc gia Hà Nội"
+                    />
+                  </div>
+
+                  {/* Service */}
+                  <div>
+                    <label className="odoo-label-static">Dịch vụ yêu cầu</label>
+                    <select
+                      className="odoo-input"
+                      value={newLeadService}
+                      onChange={(e) => setNewLeadService(e.target.value)}
+                    >
+                      {SERVICES.map(s => (
+                        <option key={s.value} value={s.value}>{s.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Level */}
+                  <div>
+                    <label className="odoo-label-static">Cấp học đào tạo</label>
+                    <select
+                      className="odoo-input"
+                      value={newLeadLevel}
+                      onChange={(e) => setNewLeadLevel(e.target.value)}
+                    >
+                      {LEVELS.map(l => (
+                        <option key={l.value} value={l.value}>{l.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Quantity */}
+                  <div>
+                    <label className="odoo-label-static">Khối lượng ({SERVICES.find(s => s.value === newLeadService)?.unit || 'Đơn vị'})</label>
+                    <input
+                      type="number"
+                      className="odoo-input"
+                      value={newLeadQty}
+                      onChange={(e) => setNewLeadQty(Math.max(1, parseInt(e.target.value) || 1))}
+                      min="1"
+                      required
+                    />
+                  </div>
+
+                  {/* Deadline */}
+                  <div>
+                    <label className="odoo-label-static">Hạn hoàn thành</label>
+                    <select
+                      className="odoo-input"
+                      value={newLeadDeadline}
+                      onChange={(e) => setNewLeadDeadline(e.target.value)}
+                    >
+                      {DEADLINES.map(d => (
+                        <option key={d.value} value={d.value}>{d.name}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {/* Status */}
+                  <div>
+                    <label className="odoo-label-static">Trạng thái (Giai đoạn)</label>
+                    <select
+                      className="odoo-input"
+                      value={newLeadStatus}
+                      onChange={(e) => setNewLeadStatus(e.target.value)}
+                    >
+                      <option value="new">🔵 Mới (New)</option>
+                      <option value="contacting">🟡 Đang tư vấn (Contacting)</option>
+                      <option value="completed">🟢 Đã chốt (Won)</option>
+                      <option value="cancelled">🔴 Đã hủy (Lost)</option>
+                    </select>
+                  </div>
+
+                  {/* Estimate Display */}
+                  <div>
+                    <label className="odoo-label-static">Dự kiến chi phí (Odoo Engine)</label>
+                    <div className="odoo-form-estimate">
+                      {calculateEstimate()}
+                    </div>
+                  </div>
+
+                  {/* Notes */}
+                  <div className="odoo-form-col-full">
+                    <label className="odoo-label-static">Ghi chú quản trị bổ sung</label>
+                    <textarea
+                      className="odoo-input"
+                      style={{ minHeight: '60px', resize: 'vertical' }}
+                      value={newLeadNotes}
+                      onChange={(e) => setNewLeadNotes(e.target.value)}
+                      placeholder="Lưu các thông tin trao đổi, yêu cầu riêng từ học viên..."
+                    />
+                  </div>
                 </div>
               </div>
 
-              <div className="modal-actions">
+              <div className="odoo-modal-footer">
                 <button
                   type="button"
-                  className="btn-action-secondary"
+                  className="btn-odoo-secondary"
                   onClick={() => setShowAddForm(false)}
                 >
-                  Hủy Bỏ
+                  ĐÓNG
                 </button>
                 <button
                   type="submit"
-                  className="btn-action-primary"
+                  className="btn-odoo-primary"
+                  style={{ background: '#00A09D' }}
                   disabled={formIsSubmitting}
                 >
-                  {formIsSubmitting ? 'Đang Lưu...' : 'LƯU LEAD HỌC VIÊN'}
+                  {formIsSubmitting ? 'ĐANG LƯU...' : 'LƯU VÀ ĐÓNG'}
                 </button>
               </div>
             </form>
